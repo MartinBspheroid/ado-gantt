@@ -8,6 +8,7 @@ import {
   AdoWorkItem,
   GanttFilters 
 } from "../types";
+import { iterationService } from "./IterationService";
 
 export class WorkItemService {
   private witClient: WorkItemTrackingRestClient | null = null;
@@ -21,6 +22,9 @@ export class WorkItemService {
     
     const context = SDK.getWebContext();
     this.projectName = context.project?.name || "";
+    
+    // Initialize iteration service
+    await iterationService.initialize();
   }
 
   async queryWorkItems(filters?: GanttFilters): Promise<WorkItem[]> {
@@ -152,7 +156,15 @@ export class WorkItemService {
     }
 
     if (filters?.iterationPath) {
-      conditions.push(`[System.IterationPath] UNDER '${filters.iterationPath}'`);
+      // Handle iteration macros like @CurrentIteration-1
+      let iterationCondition: string;
+      if (iterationService.containsIterationMacro(filters.iterationPath)) {
+        // For macros, use them directly in WIQL - ADO will resolve them
+        iterationCondition = `[System.IterationPath] UNDER '${filters.iterationPath}'`;
+      } else {
+        iterationCondition = `[System.IterationPath] UNDER '${filters.iterationPath}'`;
+      }
+      conditions.push(iterationCondition);
     }
 
     conditions.push(

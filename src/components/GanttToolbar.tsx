@@ -1,5 +1,8 @@
 import * as React from "react";
-import { GanttToolbarProps, ZoomLevel, WorkItemType, WorkItemState } from "../types";
+import { GanttToolbarProps, ZoomLevel, WorkItemType, WorkItemState, GroupByOption } from "../types";
+import { SavedBoardsSelector } from "./SavedBoardsSelector";
+import { GroupBySelector } from "./GroupBySelector";
+import { ProgressSummary } from "./ProgressSummary";
 import "../styles/GanttToolbar.css";
 
 const WORK_ITEM_TYPES: { id: WorkItemType; text: string }[] = [
@@ -32,7 +35,15 @@ export const GanttToolbar: React.FC<GanttToolbarProps> = ({
   onRefresh,
   isLoading,
   availableAreaPaths,
-  availableIterations
+  availableIterations,
+  progressSummary,
+  savedBoards,
+  currentBoardId,
+  onBoardSelect,
+  onSaveBoard,
+  onDeleteBoard,
+  groupBy,
+  onGroupByChange
 }) => {
   const handleWorkItemTypeToggle = (typeId: WorkItemType) => {
     const currentTypes = filters.workItemTypes;
@@ -58,6 +69,29 @@ export const GanttToolbar: React.FC<GanttToolbarProps> = ({
 
   return (
     <div className="gantt-toolbar">
+      {/* Saved Boards Section */}
+      {savedBoards && onBoardSelect && onSaveBoard && onDeleteBoard && (
+        <div className="toolbar-section toolbar-saved-boards">
+          <SavedBoardsSelector
+            boards={savedBoards}
+            currentBoardId={currentBoardId || null}
+            onSelect={onBoardSelect}
+            onSave={onSaveBoard}
+            onDelete={onDeleteBoard}
+            onDuplicate={(id, name) => {
+              // Duplicate logic will be handled by parent
+              const board = savedBoards.find(b => b.id === id);
+              if (board) {
+                onSaveBoard(name);
+              }
+            }}
+          />
+        </div>
+      )}
+
+      {/* Progress Summary */}
+      {progressSummary && <ProgressSummary summary={progressSummary} />}
+
       <div className="toolbar-section toolbar-filters">
         <div className="filter-group">
           <label>Types:</label>
@@ -90,6 +124,16 @@ export const GanttToolbar: React.FC<GanttToolbarProps> = ({
             ))}
           </div>
         </div>
+
+        {/* Group By Selector */}
+        {groupBy !== undefined && onGroupByChange && (
+          <div className="filter-group">
+            <GroupBySelector
+              groupBy={groupBy}
+              onGroupByChange={onGroupByChange}
+            />
+          </div>
+        )}
       </div>
 
       <div className="toolbar-section toolbar-actions">

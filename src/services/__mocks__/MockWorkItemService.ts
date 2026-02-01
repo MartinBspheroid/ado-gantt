@@ -169,7 +169,7 @@ export class MockWorkItemService {
       }
 
       // Filter by assigned to
-      if (filters.assignedTo?.length > 0) {
+      if (filters.assignedTo && filters.assignedTo.length > 0) {
         if (!item.assignedTo || !filters.assignedTo.includes(item.assignedTo.id)) {
           return false;
         }

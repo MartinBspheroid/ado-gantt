@@ -1,0 +1,33 @@
+/* Group By Selector Styles */
+.group-by-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.group-by-selector label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #323130;
+  white-space: nowrap;
+}
+
+.group-by-select {
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid #8a8886;
+  border-radius: 2px;
+  background-color: white;
+  min-width: 140px;
+  cursor: pointer;
+}
+
+.group-by-select:hover {
+  border-color: #0078d4;
+}
+
+.group-by-select:focus {
+  outline: none;
+  border-color: #0078d4;
+  box-shadow: 0 0 0 1px #0078d4;
+}

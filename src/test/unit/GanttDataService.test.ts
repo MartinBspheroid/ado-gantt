@@ -6,7 +6,7 @@ import {
   WorkItemType, 
   WorkItemState,
   ZoomLevel 
-} from '../../../types';
+} from '../../types';
 
 describe('GanttDataService', () => {
   let service: GanttDataService;

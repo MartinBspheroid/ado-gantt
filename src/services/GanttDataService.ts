@@ -1,4 +1,5 @@
 import { WorkItem, GanttItem, ZoomLevel, STATE_COLORS, WorkItemState } from "../types";
+import { progressCalculationService } from "./ProgressCalculationService";
 
 export class GanttDataService {
   
@@ -33,6 +34,7 @@ export class GanttDataService {
     const { startDate, endDate, duration } = this.calculateDates(workItem);
     const stateColor = STATE_COLORS[workItem.state as WorkItemState] || STATE_COLORS['New'];
     const progress = this.calculateProgress(workItem);
+    const progressStatus = progressCalculationService.calculateProgressStatus(workItem);
 
     return {
       id: workItem.id,
@@ -46,7 +48,8 @@ export class GanttDataService {
       open: true,
       workItem: workItem,
       color: stateColor.backgroundColor,
-      textColor: stateColor.color
+      textColor: stateColor.color,
+      progressStatus: progressStatus
     };
   }
 

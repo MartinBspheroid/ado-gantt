@@ -80,7 +80,14 @@ export const GanttChart: React.FC<GanttChartProps> = ({
       if (task.workItem.type === 'Epic') classes.push('gantt-task-epic');
       if (task.workItem.type === 'Feature') classes.push('gantt-task-feature');
       if (task.type === 'project') classes.push('gantt-task-project');
+      if (task.progressStatus) classes.push(`gantt-task-status-${task.progressStatus.toLowerCase().replace(' ', '-')}`);
       return classes.join(' ');
+    };
+    
+    // Add progress status indicator to task text
+    gantt.templates.task_text = (start: Date, end: Date, task: any) => {
+      const statusIcon = getStatusIcon(task.progressStatus || 'Not Started');
+      return `<span class="gantt-task-status-icon">${statusIcon}</span> ${task.text}`;
     };
   };
 
@@ -147,6 +154,17 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  };
+
+  const getStatusIcon = (status: string): string => {
+    switch (status) {
+      case 'Done': return '✓';
+      case 'On Track': return '●';
+      case 'At Risk': return '⚠';
+      case 'Off Track': return '✕';
+      case 'Not Started': return '○';
+      default: return '';
+    }
   };
 
   return (

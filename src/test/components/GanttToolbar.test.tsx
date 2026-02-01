@@ -103,7 +103,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should toggle on an unselected work item type', () => {
-      const filtersWithoutBug = {
+      const filtersWithoutBug: GanttFilters = {
         ...defaultFilters,
         workItemTypes: ['User Story', 'Task', 'Feature']
       };
@@ -150,7 +150,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should toggle on an unselected state', () => {
-      const filtersWithoutClosed = {
+      const filtersWithoutClosed: GanttFilters = {
         ...defaultFilters,
         states: ['New', 'Active', 'Resolved']
       };

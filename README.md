@@ -15,6 +15,39 @@ Visualize your work items in an interactive Gantt chart view. Plan, track, and m
 - **Filtering**: Filter by area path, iteration, assignee, and more
 - **Zoom Levels**: View by day, week, month, or quarter
 
+### Saved Gantt Boards
+Save and switch between multiple Gantt configurations. Each board stores:
+- Filter settings (work item types, states, area paths)
+- Zoom level preference
+- Group by settings
+- Column widths and expanded/collapsed state
+
+### Progress Calculation
+Timeline-based progress tracking with automatic status indicators:
+- **On Track**: Work progressing as expected
+- **At Risk**: Past midpoint but before deadline
+- **Off Track**: Past deadline and not closed
+- **Not Started**: New state items
+- **Done**: Closed or resolved items
+
+Visual indicators appear on Gantt bars and a summary shows counts in the header.
+
+### Team Grouping
+Group work items by:
+- Assigned To (swimlane view per team member)
+- Work Item Type
+- State
+- Iteration
+
+### Iteration Shifting
+Support for relative iteration syntax in filters:
+- `@CurrentIteration` - Current iteration
+- `@CurrentIteration-1` - Previous iteration
+- `@CurrentIteration+1` - Next iteration
+- Supports any offset (+/- n)
+
+This allows saved boards to dynamically adjust to the current sprint context.
+
 ## Getting Started
 
 ### For Users
