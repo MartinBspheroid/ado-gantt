@@ -1,0 +1,2603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure DevOps Gantt Chart Demo</title>
+    
+    <!-- dhtmlx-gantt CSS -->
+    <link rel="stylesheet" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css" type="text/css">
+    
+    <style>
+        /* ============================================
+           ITERATION 5: FINAL POLISH
+           Changes:
+           - Accessibility improvements (ARIA, keyboard nav)
+           - Dark mode toggle and theme support
+           - Animation/transitions polish
+           - Focus indicators for keyboard users
+           - Reduced motion support
+           - High contrast mode support
+           - Final visual QA
+           ============================================ */
+        
+        :root {
+            /* Light Theme (Default) */
+            --ado-primary: #0078d4;
+            --ado-primary-hover: #106ebe;
+            --ado-primary-active: #005a9e;
+            --ado-primary-light: #deecf9;
+            --ado-primary-lighter: #eff6fc;
+            
+            --ado-state-new: #b2b2b2;
+            --ado-state-active: #007acc;
+            --ado-state-resolved: #ff9d00;
+            --ado-state-closed: #339933;
+            
+            --ado-type-epic: #ff7b00;
+            --ado-type-feature: #773b93;
+            --ado-type-story: #009ccc;
+            --ado-type-task: #f2cb1d;
+            --ado-type-bug: #cc293d;
+            
+            --ado-text-primary: #323130;
+            --ado-text-secondary: #605e5c;
+            --ado-text-disabled: #a19f9d;
+            
+            --ado-bg-canvas: #faf9f8;
+            --ado-bg-surface: #ffffff;
+            --ado-bg-subtle: #f3f2f1;
+            --ado-bg-hover: #f3f2f1;
+            --ado-bg-selected: #deecf9;
+            
+            --ado-border-standard: #e1dfdd;
+            --ado-border-subtle: #f3f2f1;
+            --ado-border-input: #8a8886;
+            
+            --ado-font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+            
+            --ado-space-xs: 4px;
+            --ado-space-s: 8px;
+            --ado-space-m: 12px;
+            --ado-space-l: 16px;
+            --ado-space-xl: 20px;
+            
+            --ado-sidebar-width: 260px;
+            --ado-header-height: 48px;
+            --ado-subheader-height: 40px;
+            --ado-toolbar-height: 44px;
+            
+            --ado-shadow-2: 0 0.5px 1px rgba(0,0,0,0.14);
+            --ado-shadow-4: 0 2px 4px rgba(0,0,0,0.14);
+            --ado-shadow-8: 0 4px 8px rgba(0,0,0,0.14);
+            --ado-shadow-16: 0 8px 16px rgba(0,0,0,0.14);
+            --ado-shadow-28: 0 14px 28px rgba(0,0,0,0.24);
+            
+            --ado-radius-sm: 2px;
+            --ado-radius-md: 4px;
+            --ado-radius-lg: 10px;
+            
+            /* Focus Ring */
+            --ado-focus-ring: 0 0 0 2px var(--ado-primary);
+            --ado-focus-ring-offset: 2px;
+            
+            /* Transitions */
+            --ado-transition-fast: 0.15s ease;
+            --ado-transition-medium: 0.25s ease;
+            --ado-transition-slow: 0.35s ease;
+        }
+        
+        /* ============================================
+           DARK MODE THEME
+           ============================================ */
+        [data-theme="dark"] {
+            --ado-primary: #2899f5;
+            --ado-primary-hover: #3aa0f5;
+            --ado-primary-active: #6cb8f8;
+            --ado-primary-light: #0e2e4d;
+            --ado-primary-lighter: #082038;
+            
+            --ado-text-primary: #ffffff;
+            --ado-text-secondary: #a19f9d;
+            --ado-text-disabled: #605e5c;
+            
+            --ado-bg-canvas: #0d0d0d;
+            --ado-bg-surface: #1e1e1e;
+            --ado-bg-subtle: #252525;
+            --ado-bg-hover: #2d2d2d;
+            --ado-bg-selected: #0e2e4d;
+            
+            --ado-border-standard: #3d3d3d;
+            --ado-border-subtle: #2d2d2d;
+            --ado-border-input: #484644;
+            
+            --ado-shadow-2: 0 0.5px 1px rgba(0,0,0,0.5);
+            --ado-shadow-4: 0 2px 4px rgba(0,0,0,0.5);
+            --ado-shadow-8: 0 4px 8px rgba(0,0,0,0.5);
+            --ado-shadow-16: 0 8px 16px rgba(0,0,0,0.5);
+            --ado-shadow-28: 0 14px 28px rgba(0,0,0,0.6);
+        }
+        
+        /* High Contrast Mode */
+        @media (prefers-contrast: high) {
+            :root {
+                --ado-border-standard: #000000;
+                --ado-border-input: #000000;
+                --ado-text-primary: #000000;
+                --ado-focus-ring: 0 0 0 3px #000000;
+            }
+            
+            [data-theme="dark"] {
+                --ado-border-standard: #ffffff;
+                --ado-border-input: #ffffff;
+                --ado-text-primary: #ffffff;
+                --ado-focus-ring: 0 0 0 3px #ffffff;
+            }
+        }
+        
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
+        /* Reset */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--ado-font-family);
+            font-size: 12px;
+            line-height: 16px;
+            color: var(--ado-text-primary);
+            background-color: var(--ado-bg-canvas);
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color var(--ado-transition-medium), color var(--ado-transition-medium);
+        }
+        
+        /* Focus Visible - for keyboard navigation */
+        *:focus {
+            outline: none;
+        }
+        
+        *:focus-visible {
+            outline: 2px solid var(--ado-primary);
+            outline-offset: 2px;
+        }
+        
+        button:focus-visible,
+        a:focus-visible,
+        select:focus-visible,
+        input:focus-visible {
+            box-shadow: var(--ado-focus-ring);
+            outline: none;
+        }
+        
+        /* Skip Link for Accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--ado-primary);
+            color: white;
+            padding: 8px 16px;
+            z-index: 10000;
+            transition: top var(--ado-transition-fast);
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        /* ============================================
+           TOP NAVIGATION
+           ============================================ */
+        .ado-top-nav {
+            background: var(--ado-bg-surface);
+            border-bottom: 1px solid var(--ado-border-standard);
+            height: var(--ado-header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 var(--ado-space-l);
+            gap: var(--ado-space-m);
+            transition: background-color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .ado-org-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-s);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--ado-text-primary);
+        }
+        
+        .ado-org-brand svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--ado-primary);
+            transition: fill var(--ado-transition-fast);
+        }
+        
+        .ado-primary-nav {
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-xs);
+            flex: 1;
+        }
+        
+        .ado-nav-item {
+            padding: var(--ado-space-s) var(--ado-space-m);
+            font-size: 13px;
+            line-height: 20px;
+            color: var(--ado-text-primary);
+            text-decoration: none;
+            border-radius: var(--ado-radius-sm);
+            transition: background-color var(--ado-transition-fast), color var(--ado-transition-fast);
+            position: relative;
+        }
+        
+        .ado-nav-item:hover {
+            background-color: var(--ado-bg-subtle);
+        }
+        
+        .ado-nav-item:active {
+            transform: translateY(1px);
+        }
+        
+        .ado-nav-item.active {
+            color: var(--ado-primary);
+            font-weight: 600;
+        }
+        
+        .ado-nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: var(--ado-space-m);
+            right: var(--ado-space-m);
+            height: 2px;
+            background: var(--ado-primary);
+        }
+        
+        .ado-user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-s);
+        }
+        
+        .ado-icon-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: var(--ado-radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ado-text-secondary);
+            transition: all var(--ado-transition-fast);
+            font-size: 16px;
+            position: relative;
+        }
+        
+        .ado-icon-btn:hover {
+            background-color: var(--ado-bg-subtle);
+            color: var(--ado-text-primary);
+            transform: translateY(-1px);
+        }
+        
+        .ado-icon-btn:active {
+            transform: translateY(0);
+        }
+        
+        .ado-icon-btn[aria-pressed="true"] {
+            background-color: var(--ado-bg-selected);
+            color: var(--ado-primary);
+        }
+        
+        /* Theme Toggle Icon Animation */
+        .theme-icon {
+            transition: transform var(--ado-transition-medium);
+        }
+        
+        [data-theme="dark"] .theme-icon {
+            transform: rotate(180deg);
+        }
+        
+        .ado-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--ado-primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform var(--ado-transition-fast), box-shadow var(--ado-transition-fast);
+        }
+        
+        .ado-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--ado-shadow-4);
+        }
+        
+        /* ============================================
+           CONTEXT HEADER
+           ============================================ */
+        .ado-context-header {
+            background: var(--ado-bg-subtle);
+            border-bottom: 1px solid var(--ado-border-standard);
+            padding: var(--ado-space-s) var(--ado-space-l);
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-s);
+            height: var(--ado-subheader-height);
+            transition: background-color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .ado-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-xs);
+            font-size: 13px;
+            line-height: 20px;
+        }
+        
+        .ado-breadcrumb-item {
+            color: var(--ado-primary);
+            text-decoration: none;
+            padding: 2px var(--ado-space-xs);
+            border-radius: var(--ado-radius-sm);
+            transition: all var(--ado-transition-fast);
+        }
+        
+        .ado-breadcrumb-item:hover {
+            background: var(--ado-bg-hover);
+            text-decoration: underline;
+        }
+        
+        .ado-breadcrumb-separator {
+            color: var(--ado-text-secondary);
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .ado-breadcrumb-current {
+            color: var(--ado-text-primary);
+            font-weight: 600;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        /* ============================================
+           MAIN LAYOUT
+           ============================================ */
+        .ado-main-layout {
+            display: flex;
+            height: calc(100vh - var(--ado-header-height) - var(--ado-subheader-height));
+        }
+        
+        /* ============================================
+           SIDEBAR
+           ============================================ */
+        .ado-sidebar {
+            width: var(--ado-sidebar-width);
+            background: var(--ado-bg-surface);
+            border-right: 1px solid var(--ado-border-standard);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transition: background-color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .sidebar-section {
+            padding: var(--ado-space-m) var(--ado-space-l);
+            border-bottom: 1px solid var(--ado-border-subtle);
+            transition: border-color var(--ado-transition-medium);
+        }
+        
+        .sidebar-title {
+            font-size: 11px;
+            line-height: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--ado-text-secondary);
+            margin-bottom: var(--ado-space-s);
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .filter-group {
+            margin-bottom: var(--ado-space-m);
+        }
+        
+        .filter-label {
+            font-size: 12px;
+            line-height: 16px;
+            color: var(--ado-text-secondary);
+            margin-bottom: var(--ado-space-xs);
+            display: block;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .ado-select {
+            width: 100%;
+            padding: 5px var(--ado-space-s);
+            font-size: 12px;
+            line-height: 16px;
+            border: 1px solid var(--ado-border-input);
+            border-radius: var(--ado-radius-sm);
+            background: var(--ado-bg-surface);
+            color: var(--ado-text-primary);
+            font-family: var(--ado-font-family);
+            transition: all var(--ado-transition-fast);
+            cursor: pointer;
+        }
+        
+        .ado-select:hover {
+            border-color: var(--ado-primary);
+        }
+        
+        .ado-select:focus {
+            outline: none;
+            border-color: var(--ado-primary);
+            box-shadow: inset 0 0 0 1px var(--ado-primary);
+        }
+        
+        .filter-checkbox-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--ado-space-xs);
+        }
+        
+        .ado-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-s);
+            font-size: 12px;
+            line-height: 16px;
+            cursor: pointer;
+            padding: 2px var(--ado-space-xs);
+            transition: background-color var(--ado-transition-fast);
+            border-radius: var(--ado-radius-sm);
+        }
+        
+        .ado-checkbox:hover {
+            background-color: var(--ado-bg-hover);
+        }
+        
+        .ado-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--ado-primary);
+            cursor: pointer;
+        }
+        
+        .filter-count {
+            color: var(--ado-text-secondary);
+            font-size: 11px;
+            margin-left: auto;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--ado-space-xs);
+            margin-top: var(--ado-space-s);
+        }
+        
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: var(--ado-primary-light);
+            color: var(--ado-primary);
+            border-radius: var(--ado-radius-lg);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: default;
+            animation: tagIn var(--ado-transition-fast);
+        }
+        
+        @keyframes tagIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .filter-tag-remove {
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            transition: transform var(--ado-transition-fast);
+        }
+        
+        .filter-tag-remove:hover {
+            color: var(--ado-text-primary);
+            transform: scale(1.2);
+        }
+        
+        /* Progress Summary */
+        .progress-summary {
+            padding: var(--ado-space-m) var(--ado-space-l);
+            background: var(--ado-bg-subtle);
+            border-bottom: 1px solid var(--ado-border-standard);
+            transition: background-color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .progress-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--ado-space-xs);
+            font-size: 12px;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .progress-bar-container {
+            height: 6px;
+            background: var(--ado-border-subtle);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: var(--ado-space-xs);
+            transition: background-color var(--ado-transition-medium);
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--ado-primary) 0%, var(--ado-primary-hover) 100%);
+            border-radius: 3px;
+            transition: width var(--ado-transition-slow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--ado-space-xs);
+            margin-top: var(--ado-space-m);
+            padding-top: var(--ado-space-m);
+            border-top: 1px solid var(--ado-border-subtle);
+            transition: border-color var(--ado-transition-medium);
+        }
+        
+        .progress-stat {
+            text-align: center;
+        }
+        
+        .progress-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--ado-primary);
+            transition: color var(--ado-transition-fast), transform var(--ado-transition-fast);
+        }
+        
+        .progress-stat:hover .progress-stat-value {
+            transform: scale(1.1);
+        }
+        
+        .progress-stat-label {
+            font-size: 10px;
+            color: var(--ado-text-secondary);
+            text-transform: uppercase;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        /* ============================================
+           CONTENT AREA
+           ============================================ */
+        .ado-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* ============================================
+           COMMAND BAR
+           ============================================ */
+        .ado-command-bar {
+            background: var(--ado-bg-surface);
+            border-bottom: 1px solid var(--ado-border-standard);
+            padding: var(--ado-space-s) var(--ado-space-l);
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-s);
+            height: var(--ado-toolbar-height);
+            flex-shrink: 0;
+            transition: background-color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .command-bar-group {
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-xs);
+        }
+        
+        .command-bar-separator {
+            width: 1px;
+            height: 20px;
+            background: var(--ado-border-standard);
+            margin: 0 var(--ado-space-xs);
+            transition: background-color var(--ado-transition-medium);
+        }
+        
+        .ado-btn {
+            padding: 5px var(--ado-space-m);
+            font-size: 12px;
+            line-height: 16px;
+            font-family: var(--ado-font-family);
+            border-radius: var(--ado-radius-sm);
+            cursor: pointer;
+            transition: all var(--ado-transition-fast);
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--ado-space-xs);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ado-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width var(--ado-transition-medium), height var(--ado-transition-medium);
+        }
+        
+        .ado-btn:active::after {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .ado-btn-default {
+            background: var(--ado-bg-surface);
+            border: 1px solid var(--ado-border-input);
+            color: var(--ado-text-primary);
+            font-weight: 400;
+        }
+        
+        .ado-btn-default:hover {
+            background: var(--ado-bg-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--ado-shadow-2);
+        }
+        
+        .ado-btn-default:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        .ado-btn-primary {
+            background: var(--ado-primary);
+            border: 1px solid var(--ado-primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .ado-btn-primary:hover {
+            background: var(--ado-primary-hover);
+            border-color: var(--ado-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--ado-shadow-4);
+        }
+        
+        .ado-btn-primary:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        .ado-btn.active {
+            background: var(--ado-primary);
+            color: white;
+            border-color: var(--ado-primary);
+            font-weight: 600;
+        }
+        
+        .ado-btn-text {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--ado-primary);
+            font-weight: 400;
+        }
+        
+        .ado-btn-text:hover {
+            background: var(--ado-bg-hover);
+        }
+        
+        .ado-btn-icon {
+            width: 28px;
+            padding: 0;
+            justify-content: center;
+        }
+        
+        .command-bar-label {
+            font-size: 12px;
+            line-height: 16px;
+            color: var(--ado-text-secondary);
+            margin-right: var(--ado-space-xs);
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .command-bar-spacer { flex: 1; }
+        
+        .view-switcher {
+            display: flex;
+            align-items: center;
+            background: var(--ado-bg-subtle);
+            border-radius: var(--ado-radius-sm);
+            padding: 2px;
+            transition: background-color var(--ado-transition-medium);
+        }
+        
+        .view-option {
+            padding: 3px var(--ado-space-m);
+            font-size: 12px;
+            line-height: 16px;
+            border-radius: var(--ado-radius-sm);
+            cursor: pointer;
+            transition: all var(--ado-transition-fast);
+        }
+        
+        .view-option:hover {
+            background: var(--ado-bg-hover);
+        }
+        
+        .view-option.active {
+            background: var(--ado-bg-surface);
+            color: var(--ado-primary);
+            font-weight: 600;
+            box-shadow: var(--ado-shadow-2);
+            transform: translateY(-1px);
+        }
+        
+        /* Export Menu */
+        .export-menu {
+            position: relative;
+        }
+        
+        .export-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: var(--ado-space-xs);
+            background: var(--ado-bg-surface);
+            border: 1px solid var(--ado-border-standard);
+            border-radius: var(--ado-radius-md);
+            box-shadow: var(--ado-shadow-16);
+            min-width: 160px;
+            display: none;
+            z-index: 100;
+            padding: var(--ado-space-xs) 0;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity var(--ado-transition-fast), transform var(--ado-transition-fast);
+        }
+        
+        .export-dropdown.visible {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .export-item {
+            padding: var(--ado-space-s) var(--ado-space-m);
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-s);
+            transition: background-color var(--ado-transition-fast);
+        }
+        
+        .export-item:hover {
+            background: var(--ado-bg-hover);
+        }
+        
+        .export-icon {
+            width: 16px;
+            text-align: center;
+            color: var(--ado-text-secondary);
+            transition: color var(--ado-transition-fast);
+        }
+        
+        .export-item:hover .export-icon {
+            color: var(--ado-primary);
+        }
+        
+        /* ============================================
+           GANTT CONTAINER
+           ============================================ */
+        .gantt-container {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Loading State */
+        .gantt-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--ado-bg-surface);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--ado-transition-medium), visibility var(--ado-transition-medium);
+        }
+        
+        .gantt-loading.visible {
+            opacity: 0.95;
+            visibility: visible;
+        }
+        
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--ado-border-subtle);
+            border-top-color: var(--ado-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: var(--ado-space-m);
+            color: var(--ado-text-secondary);
+            font-size: 12px;
+        }
+        
+        /* ============================================
+           GANTT STYLING
+           ============================================ */
+        .gantt_task_line {
+            border-radius: var(--ado-radius-sm);
+            box-shadow: var(--ado-shadow-2);
+            cursor: pointer;
+            transition: box-shadow var(--ado-transition-fast), transform var(--ado-transition-fast);
+        }
+        
+        .gantt_task_line:hover {
+            box-shadow: var(--ado-shadow-8);
+            z-index: 100;
+            transform: translateY(-1px);
+        }
+        
+        .gantt_task_line.gantt_selected {
+            box-shadow: 0 0 0 2px var(--ado-primary), var(--ado-shadow-8);
+            z-index: 101;
+        }
+        
+        .gantt_task_drag {
+            position: absolute;
+            top: 0;
+            width: 8px;
+            height: 100%;
+            cursor: col-resize;
+            background: rgba(255,255,255,0.3);
+            opacity: 0;
+            transition: opacity var(--ado-transition-fast), background var(--ado-transition-fast);
+        }
+        
+        .gantt_task_line:hover .gantt_task_drag,
+        .gantt_task_line.gantt_selected .gantt_task_drag {
+            opacity: 1;
+        }
+        
+        .gantt_task_drag.gantt_left {
+            left: 0;
+            border-radius: var(--ado-radius-sm) 0 0 var(--ado-radius-sm);
+        }
+        
+        .gantt_task_drag.gantt_right {
+            right: 0;
+            border-radius: 0 var(--ado-radius-sm) var(--ado-radius-sm) 0;
+        }
+        
+        .gantt_task_drag:hover {
+            background: rgba(255,255,255,0.6);
+        }
+        
+        .gantt_task_progress_drag {
+            cursor: ew-resize;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--ado-bg-surface);
+            border: 2px solid currentColor;
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity var(--ado-transition-fast), transform var(--ado-transition-fast);
+            box-shadow: var(--ado-shadow-4);
+        }
+        
+        .gantt_task_line:hover .gantt_task_progress_drag,
+        .gantt_task_line.gantt_selected .gantt_task_progress_drag {
+            opacity: 1;
+        }
+        
+        .gantt_task_progress_drag:hover {
+            transform: translateY(-50%) scale(1.2);
+        }
+        
+        .gantt_task_content {
+            font-size: 12px;
+            line-height: 16px;
+            font-weight: 600;
+            padding: 2px var(--ado-space-m);
+            pointer-events: none;
+        }
+        
+        /* STATE COLORS */
+        .gantt_task_line.state-new {
+            background-color: var(--ado-state-new);
+            border: 1px solid #999999;
+        }
+        .gantt_task_line.state-new .gantt_task_progress { background-color: #999999; }
+        
+        .gantt_task_line.state-active {
+            background-color: var(--ado-state-active);
+            border: 1px solid #0069b4;
+        }
+        .gantt_task_line.state-active .gantt_task_progress { background-color: #0069b4; }
+        
+        .gantt_task_line.state-resolved {
+            background-color: var(--ado-state-resolved);
+            border: 1px solid #e68e00;
+        }
+        .gantt_task_line.state-resolved .gantt_task_progress { background-color: #e68e00; }
+        
+        .gantt_task_line.state-closed {
+            background-color: var(--ado-state-closed);
+            border: 1px solid #2d8a2d;
+        }
+        .gantt_task_line.state-closed .gantt_task_progress { background-color: #2d8a2d; }
+        
+        /* Type Colors */
+        .type-epic { border-left: 3px solid var(--ado-type-epic) !important; }
+        .type-feature { border-left: 3px solid var(--ado-type-feature) !important; }
+        .type-story { border-left: 3px solid var(--ado-type-story) !important; }
+        .type-task { border-left: 3px solid var(--ado-type-task) !important; }
+        .type-bug { border-left: 3px solid var(--ado-type-bug) !important; }
+        
+        /* Grid */
+        .gantt_grid_scale {
+            background-color: var(--ado-bg-subtle);
+            border-bottom: 1px solid var(--ado-border-standard);
+            transition: background-color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .gantt_grid_scale .gantt_grid_head_cell {
+            color: var(--ado-text-primary);
+            font-weight: 600;
+            font-size: 11px;
+            line-height: 14px;
+            text-transform: uppercase;
+            padding: 10px var(--ado-space-s);
+            letter-spacing: 0.3px;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .gantt_grid_data {
+            background-color: var(--ado-bg-surface);
+            transition: background-color var(--ado-transition-medium);
+        }
+        
+        .gantt_grid_data .gantt_cell {
+            border-right: 1px solid var(--ado-border-subtle);
+            transition: background-color var(--ado-transition-fast), border-color var(--ado-transition-medium);
+        }
+        
+        .gantt_row {
+            border-bottom: 1px solid var(--ado-border-subtle);
+            transition: background-color var(--ado-transition-fast), border-color var(--ado-transition-medium);
+        }
+        
+        .gantt_row:hover {
+            background-color: var(--ado-bg-hover);
+        }
+        
+        .gantt_row.gantt_selected {
+            background-color: var(--ado-selected);
+        }
+        
+        .gantt_row:focus {
+            outline: none;
+            background-color: var(--ado-selected);
+            box-shadow: inset 3px 0 0 var(--ado-primary);
+        }
+        
+        .gantt_grid_editor { padding: 0; }
+        
+        .gantt_grid_editor input,
+        .gantt_grid_editor select {
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--ado-primary);
+            padding: 4px var(--ado-space-s);
+            font-family: var(--ado-font-family);
+            font-size: 12px;
+            outline: none;
+            box-shadow: inset 0 0 0 1px var(--ado-primary);
+            background: var(--ado-bg-surface);
+            color: var(--ado-text-primary);
+        }
+        
+        /* Timeline */
+        .gantt_task_scale {
+            background-color: var(--ado-bg-subtle);
+            transition: background-color var(--ado-transition-medium);
+        }
+        
+        .gantt_scale_cell {
+            color: var(--ado-text-secondary);
+            font-size: 11px;
+            line-height: 14px;
+            border-right: 1px solid var(--ado-border-standard);
+            transition: color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        /* Icons */
+        .wi-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            margin-right: var(--ado-space-s);
+            font-size: 9px;
+            line-height: 9px;
+            font-weight: 700;
+            color: white;
+            border-radius: var(--ado-radius-sm);
+            flex-shrink: 0;
+            transition: transform var(--ado-transition-fast);
+        }
+        
+        .gantt_row:hover .wi-icon {
+            transform: scale(1.1);
+        }
+        
+        .wi-epic { background-color: var(--ado-type-epic); }
+        .wi-feature { background-color: var(--ado-type-feature); }
+        .wi-story { background-color: var(--ado-type-story); }
+        .wi-task { background-color: var(--ado-type-task); color: var(--ado-text-primary); }
+        .wi-bug { background-color: var(--ado-type-bug); }
+        
+        /* Badges */
+        .state-badge {
+            display: inline-block;
+            padding: 2px var(--ado-space-m);
+            border-radius: var(--ado-radius-lg);
+            font-size: 10px;
+            line-height: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            transition: transform var(--ado-transition-fast);
+        }
+        
+        .gantt_row:hover .state-badge {
+            transform: scale(1.05);
+        }
+        
+        .state-badge-new { background: var(--ado-state-new); color: white; }
+        .state-badge-active { background: var(--ado-state-active); color: white; }
+        .state-badge-resolved { background: var(--ado-state-resolved); color: white; }
+        .state-badge-closed { background: var(--ado-state-closed); color: white; }
+        
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 12px;
+            line-height: 16px;
+            color: var(--ado-text-primary);
+            font-weight: 400;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .wi-id {
+            color: var(--ado-primary);
+            font-weight: 600;
+            cursor: pointer;
+            font-family: var(--ado-font-family);
+            font-size: 12px;
+            text-decoration: none;
+            transition: color var(--ado-transition-fast);
+        }
+        
+        .wi-id:hover {
+            color: var(--ado-primary-hover);
+            text-decoration: underline;
+        }
+        
+        /* Tree */
+        .gantt_tree_icon {
+            color: var(--ado-text-secondary);
+            cursor: pointer;
+            transition: color var(--ado-transition-fast), transform var(--ado-transition-fast);
+        }
+        
+        .gantt_tree_icon:hover {
+            color: var(--ado-primary);
+            transform: scale(1.1);
+        }
+        
+        .gantt_tree_content { padding-left: var(--ado-space-xs); }
+        .gantt_cell_tree { padding-left: var(--ado-space-s); }
+        
+        .gantt_tree_open,
+        .gantt_tree_close {
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--ado-space-xs);
+            cursor: pointer;
+            color: var(--ado-text-secondary);
+            transition: all var(--ado-transition-fast);
+            border-radius: var(--ado-radius-sm);
+        }
+        
+        .gantt_tree_open:hover,
+        .gantt_tree_close:hover {
+            color: var(--ado-primary);
+            background: var(--ado-bg-hover);
+            transform: scale(1.1);
+        }
+        
+        /* Today Marker */
+        .gantt_marker {
+            background-color: #d83b01 !important;
+            width: 2px !important;
+            z-index: 10;
+        }
+        
+        .gantt_marker.today { background-color: #d83b01 !important; }
+        
+        .gantt_marker_content {
+            background-color: #d83b01;
+            color: white;
+            font-size: 10px;
+            line-height: 14px;
+            padding: 2px 6px;
+            border-radius: var(--ado-radius-sm);
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* ============================================
+           CONTEXT MENU
+           ============================================ */
+        .ado-context-menu {
+            position: fixed;
+            background: var(--ado-bg-surface);
+            border: 1px solid var(--ado-border-standard);
+            border-radius: var(--ado-radius-md);
+            box-shadow: var(--ado-shadow-16);
+            min-width: 180px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.95);
+            transition: opacity var(--ado-transition-fast), visibility var(--ado-transition-fast), transform var(--ado-transition-fast);
+            padding: var(--ado-space-xs) 0;
+        }
+        
+        .ado-context-menu.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        
+        .context-menu-header {
+            padding: var(--ado-space-s) var(--ado-space-m);
+            border-bottom: 1px solid var(--ado-border-subtle);
+            margin-bottom: var(--ado-space-xs);
+            transition: border-color var(--ado-transition-medium);
+        }
+        
+        .context-menu-title {
+            font-size: 11px;
+            line-height: 14px;
+            color: var(--ado-text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .context-menu-item {
+            padding: var(--ado-space-s) var(--ado-space-m);
+            font-size: 12px;
+            line-height: 16px;
+            color: var(--ado-text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-s);
+            transition: background-color var(--ado-transition-fast);
+        }
+        
+        .context-menu-item:hover {
+            background-color: var(--ado-bg-hover);
+        }
+        
+        .context-menu-item.disabled {
+            color: var(--ado-text-disabled);
+            cursor: not-allowed;
+        }
+        
+        .context-menu-item.disabled:hover { background-color: transparent; }
+        
+        .context-menu-separator {
+            height: 1px;
+            background: var(--ado-border-subtle);
+            margin: var(--ado-space-xs) 0;
+            transition: background-color var(--ado-transition-medium);
+        }
+        
+        .context-menu-icon {
+            width: 16px;
+            text-align: center;
+            color: var(--ado-text-secondary);
+            transition: color var(--ado-transition-fast);
+        }
+        
+        .context-menu-item:hover .context-menu-icon {
+            color: var(--ado-primary);
+        }
+        
+        .context-menu-shortcut {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--ado-text-secondary);
+        }
+        
+        /* ============================================
+           TOOLTIP
+           ============================================ */
+        .gantt_tooltip {
+            font-family: var(--ado-font-family);
+            background: var(--ado-bg-surface);
+            border: 1px solid var(--ado-border-standard);
+            border-radius: var(--ado-radius-md);
+            padding: var(--ado-space-m);
+            box-shadow: var(--ado-shadow-16);
+            font-size: 12px;
+            line-height: 16px;
+            max-width: 320px;
+            animation: tooltipIn var(--ado-transition-fast);
+        }
+        
+        @keyframes tooltipIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .gantt-tooltip-title {
+            font-weight: 600;
+            margin-bottom: var(--ado-space-s);
+            color: var(--ado-text-primary);
+            font-size: 12px;
+            line-height: 16px;
+            border-bottom: 1px solid var(--ado-border-subtle);
+            padding-bottom: var(--ado-space-s);
+            transition: color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .gantt-tooltip-row {
+            display: flex;
+            gap: var(--ado-space-s);
+            margin: 2px 0;
+        }
+        
+        .gantt-tooltip-label {
+            color: var(--ado-text-secondary);
+            min-width: 60px;
+            font-weight: 600;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        /* Status Bar */
+        .ado-status-bar {
+            background: var(--ado-bg-subtle);
+            border-top: 1px solid var(--ado-border-standard);
+            padding: var(--ado-space-s) var(--ado-space-l);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            line-height: 14px;
+            color: var(--ado-text-secondary);
+            height: 28px;
+            transition: background-color var(--ado-transition-medium), border-color var(--ado-transition-medium), color var(--ado-transition-medium);
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: var(--ado-space-xs);
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--ado-state-active);
+            animation: statusPulse 2s infinite;
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,120,212,0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 4px rgba(0,120,212,0); }
+        }
+        
+        /* Quick Edit Panel */
+        .quick-edit-panel {
+            position: fixed;
+            bottom: 28px;
+            right: var(--ado-space-l);
+            background: var(--ado-bg-surface);
+            border: 1px solid var(--ado-border-standard);
+            border-radius: var(--ado-radius-md);
+            box-shadow: var(--ado-shadow-28);
+            padding: var(--ado-space-m) var(--ado-space-l);
+            min-width: 300px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all var(--ado-transition-medium);
+            z-index: 100;
+        }
+        
+        .quick-edit-panel.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .quick-edit-header {
+            font-weight: 600;
+            margin-bottom: var(--ado-space-m);
+            padding-bottom: var(--ado-space-s);
+            border-bottom: 1px solid var(--ado-border-subtle);
+            color: var(--ado-text-primary);
+            transition: color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .quick-edit-field { margin-bottom: var(--ado-space-m); }
+        
+        .quick-edit-label {
+            font-size: 11px;
+            line-height: 14px;
+            color: var(--ado-text-secondary);
+            margin-bottom: var(--ado-space-xs);
+            display: block;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .quick-edit-input {
+            width: 100%;
+            padding: 5px var(--ado-space-s);
+            font-size: 12px;
+            border: 1px solid var(--ado-border-input);
+            border-radius: var(--ado-radius-sm);
+            font-family: var(--ado-font-family);
+            background: var(--ado-bg-surface);
+            color: var(--ado-text-primary);
+            transition: all var(--ado-transition-fast);
+        }
+        
+        .quick-edit-input:hover {
+            border-color: var(--ado-primary);
+        }
+        
+        .quick-edit-input:focus {
+            outline: none;
+            border-color: var(--ado-primary);
+            box-shadow: inset 0 0 0 1px var(--ado-primary);
+        }
+        
+        .quick-edit-actions {
+            display: flex;
+            gap: var(--ado-space-s);
+            justify-content: flex-end;
+            margin-top: var(--ado-space-m);
+        }
+        
+        /* ============================================
+           SETTINGS PANEL
+           ============================================ */
+        .settings-panel {
+            position: fixed;
+            top: var(--ado-header-height);
+            right: -400px;
+            width: 400px;
+            height: calc(100vh - var(--ado-header-height));
+            background: var(--ado-bg-surface);
+            border-left: 1px solid var(--ado-border-standard);
+            box-shadow: var(--ado-shadow-28);
+            z-index: 200;
+            transition: right var(--ado-transition-medium);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .settings-panel.visible { right: 0; }
+        
+        .settings-header {
+            padding: var(--ado-space-l);
+            border-bottom: 1px solid var(--ado-border-standard);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color var(--ado-transition-medium);
+        }
+        
+        .settings-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ado-text-primary);
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .settings-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--ado-text-secondary);
+            padding: var(--ado-space-xs);
+            border-radius: var(--ado-radius-sm);
+            transition: all var(--ado-transition-fast);
+        }
+        
+        .settings-close:hover {
+            background: var(--ado-bg-hover);
+            color: var(--ado-text-primary);
+            transform: rotate(90deg);
+        }
+        
+        .settings-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--ado-space-l);
+        }
+        
+        .settings-section {
+            margin-bottom: var(--ado-space-xl);
+            animation: fadeInUp var(--ado-transition-medium);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .settings-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--ado-text-secondary);
+            margin-bottom: var(--ado-space-m);
+            padding-bottom: var(--ado-space-s);
+            border-bottom: 1px solid var(--ado-border-subtle);
+            transition: color var(--ado-transition-medium), border-color var(--ado-transition-medium);
+        }
+        
+        .settings-field { margin-bottom: var(--ado-space-m); }
+        
+        .settings-label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: var(--ado-space-xs);
+            color: var(--ado-text-primary);
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .settings-description {
+            font-size: 11px;
+            color: var(--ado-text-secondary);
+            margin-top: var(--ado-space-xs);
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .settings-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--ado-space-s) 0;
+            cursor: pointer;
+        }
+        
+        .settings-toggle-text {
+            color: var(--ado-text-primary);
+            font-size: 12px;
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background: var(--ado-border-input);
+            border-radius: 10px;
+            transition: background-color var(--ado-transition-fast);
+        }
+        
+        .toggle-switch.active {
+            background: var(--ado-primary);
+        }
+        
+        .toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: transform var(--ado-transition-fast);
+            box-shadow: var(--ado-shadow-2);
+        }
+        
+        .toggle-switch.active .toggle-thumb {
+            transform: translateX(20px);
+        }
+        
+        .settings-footer {
+            padding: var(--ado-space-l);
+            border-top: 1px solid var(--ado-border-standard);
+            display: flex;
+            gap: var(--ado-space-s);
+            justify-content: flex-end;
+            transition: border-color var(--ado-transition-medium);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--ado-text-secondary);
+            text-align: center;
+            padding: var(--ado-space-xl);
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .empty-state.visible {
+            display: flex;
+            animation: fadeIn var(--ado-transition-medium);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: var(--ado-space-m);
+            opacity: 0.5;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ado-text-primary);
+            margin-bottom: var(--ado-space-xs);
+            transition: color var(--ado-transition-medium);
+        }
+        
+        .empty-description {
+            font-size: 12px;
+            max-width: 300px;
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            z-index: 150;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--ado-transition-medium), visibility var(--ado-transition-medium);
+        }
+        
+        .overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .ado-top-nav,
+            .ado-sidebar,
+            .ado-command-bar,
+            .ado-status-bar,
+            .ado-context-menu,
+            .settings-panel,
+            .overlay {
+                display: none !important;
+            }
+            
+            .ado-main-layout {
+                height: auto;
+            }
+            
+            .gantt-container {
+                overflow: visible;
+            }
+            
+            body {
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Top Navigation -->
+    <nav class="ado-top-nav" role="navigation" aria-label="Main navigation">
+        <div class="ado-org-brand">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M22 7H2V4h20v3zm0 6H2v-3h20v3zm0 6H2v-3h20v3z"/>
+            </svg>
+            Contoso
+        </div>
+        <div class="ado-primary-nav">
+            <a href="#" class="ado-nav-item" aria-current="false">Overview</a>
+            <a href="#" class="ado-nav-item" aria-current="false">Repos</a>
+            <a href="#" class="ado-nav-item active" aria-current="page">Boards</a>
+            <a href="#" class="ado-nav-item" aria-current="false">Pipelines</a>
+            <a href="#" class="ado-nav-item" aria-current="false">Test Plans</a>
+            <a href="#" class="ado-nav-item" aria-current="false">Artifacts</a>
+        </div>
+        <div class="ado-user-menu">
+            <button class="ado-icon-btn" 
+                    id="theme-toggle"
+                    title="Toggle dark mode" 
+                    aria-label="Toggle dark mode"
+                    aria-pressed="false"
+                    onclick="toggleTheme()">
+                <span class="theme-icon">&#9788;</span>
+            </button>
+            <button class="ado-icon-btn" title="Help" aria-label="Help">?</button>
+            <button class="ado-icon-btn" title="Notifications" aria-label="Notifications">&#128276;</button>
+            <div class="ado-avatar" title="John Doe" role="button" tabindex="0" aria-label="User menu">JD</div>
+        </div>
+    </nav>
+    
+    <!-- Context Header -->
+    <div class="ado-context-header">
+        <nav class="ado-breadcrumb" aria-label="Breadcrumb">
+            <a href="#" class="ado-breadcrumb-item">ContosoProject</a>
+            <span class="ado-breadcrumb-separator" aria-hidden="true">/</span>
+            <a href="#" class="ado-breadcrumb-item">Gantt Chart</a>
+            <span class="ado-breadcrumb-separator" aria-hidden="true">/</span>
+            <span class="ado-breadcrumb-current" aria-current="page">All Work Items</span>
+        </nav>
+    </div>
+    
+    <!-- Main Layout -->
+    <div class="ado-main-layout" id="main-content">
+        <!-- Sidebar -->
+        <aside class="ado-sidebar" role="complementary" aria-label="Filters">
+            <!-- Progress Summary -->
+            <div class="progress-summary">
+                <div class="progress-item">
+                    <span>Overall Progress</span>
+                    <span id="progress-percent" aria-live="polite">45%</span>
+                </div>
+                <div class="progress-bar-container" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar-fill" id="progress-bar" style="width: 45%"></div>
+                </div>
+                <div class="progress-stats">
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="stat-total">21</div>
+                        <div class="progress-stat-label">Total</div>
+                    </div>
+                    <div class="progress-stat">
+                        <div class="progress-stat-value" id="stat-completed">7</div>
+                        <div class="progress-stat-label">Done</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Filters</div>
+                
+                <div class="filter-group">
+                    <label class="filter-label" for="filter-iteration">Iteration</label>
+                    <select class="ado-select" id="filter-iteration" aria-label="Filter by iteration">
+                        <option value="all">All Iterations</option>
+                        <option value="sprint1">Sprint 1</option>
+                        <option value="sprint2">Sprint 2</option>
+                        <option value="sprint3">Sprint 3</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label" for="filter-area">Area Path</label>
+                    <select class="ado-select" id="filter-area" aria-label="Filter by area path">
+                        <option value="all">All Areas</option>
+                        <option value="auth">\\Authentication</option>
+                        <option value="dashboard">\\Dashboard</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Work Item Type</div>
+                <div class="filter-checkbox-list" role="group" aria-label="Filter by work item type">
+                    <label class="ado-checkbox">
+                        <input type="checkbox" checked data-filter="type" value="epic" aria-label="Filter by Epic">
+                        <span>Epic</span>
+                        <span class="filter-count">1</span>
+                    </label>
+                    <label class="ado-checkbox">
+                        <input type="checkbox" checked data-filter="type" value="feature" aria-label="Filter by Feature">
+                        <span>Feature</span>
+                        <span class="filter-count">2</span>
+                    </label>
+                    <label class="ado-checkbox">
+                        <input type="checkbox" checked data-filter="type" value="story" aria-label="Filter by User Story">
+                        <span>User Story</span>
+                        <span class="filter-count">6</span>
+                    </label>
+                    <label class="ado-checkbox">
+                        <input type="checkbox" checked data-filter="type" value="task" aria-label="Filter by Task">
+                        <span>Task</span>
+                        <span class="filter-count">12</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">State</div>
+                <div class="filter-checkbox-list" role="group" aria-label="Filter by state">
+                    <label class="ado-checkbox">
+                        <input type="checkbox" checked data-filter="state" value="new" aria-label="Filter by New state">
+                        <span>New</span>
+                        <span class="filter-count">5</span>
+                    </label>
+                    <label class="ado-checkbox">
+                        <input type="checkbox" checked data-filter="state" value="active" aria-label="Filter by Active state">
+                        <span>Active</span>
+                        <span class="filter-count">6</span>
+                    </label>
+                    <label class="ado-checkbox">
+                        <input type="checkbox" checked data-filter="state" value="resolved" aria-label="Filter by Resolved state">
+                        <span>Resolved</span>
+                        <span class="filter-count">3</span>
+                    </label>
+                    <label class="ado-checkbox">
+                        <input type="checkbox" checked data-filter="state" value="closed" aria-label="Filter by Closed state">
+                        <span>Closed</span>
+                        <span class="filter-count">7</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="filter-tags" id="active-filters" aria-label="Active filters"></div>
+            </div>
+        </aside>
+        
+        <!-- Content -->
+        <main class="ado-content" role="main">
+            <!-- Command Bar -->
+            <div class="ado-command-bar" role="toolbar" aria-label="Gantt chart tools">
+                <div class="command-bar-group">
+                    <button class="ado-btn ado-btn-primary" onclick="showNewItemDialog()" aria-label="Create new work item">
+                        <span aria-hidden="true">+</span> New Item
+                    </button>
+                    <div class="command-bar-separator" role="separator"></div>
+                    <span class="command-bar-label">Zoom:</span>
+                    <button class="ado-btn ado-btn-default" onclick="zoomTo('day')" id="btn-day" aria-pressed="false">Day</button>
+                    <button class="ado-btn ado-btn-default active" onclick="zoomTo('week')" id="btn-week" aria-pressed="true">Week</button>
+                    <button class="ado-btn ado-btn-default" onclick="zoomTo('month')" id="btn-month" aria-pressed="false">Month</button>
+                    <button class="ado-btn ado-btn-default" onclick="zoomTo('quarter')" id="btn-quarter" aria-pressed="false">Quarter</button>
+                </div>
+                
+                <div class="command-bar-separator" role="separator"></div>
+                
+                <div class="command-bar-group">
+                    <button class="ado-btn ado-btn-default" onclick="expandAll()" aria-label="Expand all rows">
+                        <span aria-hidden="true">&#8853;</span> Expand
+                    </button>
+                    <button class="ado-btn ado-btn-default" onclick="collapseAll()" aria-label="Collapse all rows">
+                        <span aria-hidden="true">&#8854;</span> Collapse
+                    </button>
+                </div>
+                
+                <div class="command-bar-spacer"></div>
+                
+                <div class="command-bar-group">
+                    <!-- Export Menu -->
+                    <div class="export-menu">
+                        <button class="ado-btn ado-btn-default" onclick="toggleExportMenu()" aria-haspopup="true" aria-expanded="false" id="export-btn">
+                            <span aria-hidden="true">&#11015;</span> Export
+                        </button>
+                        <div class="export-dropdown" id="export-dropdown" role="menu" aria-labelledby="export-btn">
+                            <div class="export-item" onclick="exportChart('png')" role="menuitem" tabindex="0">
+                                <span class="export-icon" aria-hidden="true">&#128444;</span>
+                                <span>Export as PNG</span>
+                            </div>
+                            <div class="export-item" onclick="exportChart('pdf')" role="menuitem" tabindex="0">
+                                <span class="export-icon" aria-hidden="true">&#128196;</span>
+                                <span>Export as PDF</span>
+                            </div>
+                            <div class="export-item" onclick="exportChart('excel')" role="menuitem" tabindex="0">
+                                <span class="export-icon" aria-hidden="true">&#128190;</span>
+                                <span>Export to Excel</span>
+                            </div>
+                            <div class="context-menu-separator" role="separator"></div>
+                            <div class="export-item" onclick="printChart()" role="menuitem" tabindex="0">
+                                <span class="export-icon" aria-hidden="true">&#128424;</span>
+                                <span>Print</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="command-bar-separator" role="separator"></div>
+                    
+                    <div class="view-switcher" role="radiogroup" aria-label="View mode">
+                        <span class="view-option" onclick="switchView('backlog')" role="radio" aria-checked="false" tabindex="0">Backlog</span>
+                        <span class="view-option" onclick="switchView('board')" role="radio" aria-checked="false" tabindex="0">Board</span>
+                        <span class="view-option active" onclick="switchView('gantt')" role="radio" aria-checked="true" tabindex="0">Gantt</span>
+                    </div>
+                    
+                    <div class="command-bar-separator" role="separator"></div>
+                    
+                    <button class="ado-btn ado-btn-icon ado-btn-default" title="Settings" aria-label="Open settings" onclick="toggleSettings()">
+                        &#9881;
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Gantt Container -->
+            <div class="gantt-container">
+                <div id="gantt_here" style="width: 100%; height: 100%;" role="application" aria-label="Gantt chart"></div>
+                
+                <!-- Loading State -->
+                <div class="gantt-loading" id="gantt-loading" role="status" aria-live="polite">
+                    <div class="loading-spinner" aria-hidden="true"></div>
+                    <div class="loading-text">Loading Gantt chart...</div>
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state" role="status">
+                    <div class="empty-icon" aria-hidden="true">&#128196;</div>
+                    <div class="empty-title">No work items found</div>
+                    <div class="empty-description">Try adjusting your filters or create a new work item to get started.</div>
+                </div>
+            </div>
+            
+            <!-- Status Bar -->
+            <div class="ado-status-bar" role="status" aria-live="polite">
+                <div class="status-item">
+                    <div class="status-indicator" aria-hidden="true"></div>
+                    <span id="status-count">21 work items loaded</span>
+                </div>
+                <div class="status-item">
+                    <span>Last updated: Just now</span>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Context Menu -->
+    <div class="ado-context-menu" id="context-menu" role="menu">
+        <div class="context-menu-header">
+            <span class="context-menu-title" id="context-menu-title">Work Item</span>
+        </div>
+        <div class="context-menu-item" onclick="contextAction('open')" role="menuitem" tabindex="0">
+            <span class="context-menu-icon" aria-hidden="true">&#128194;</span>
+            <span>Open</span>
+            <span class="context-menu-shortcut">Enter</span>
+        </div>
+        <div class="context-menu-item" onclick="contextAction('edit')" role="menuitem" tabindex="0">
+            <span class="context-menu-icon" aria-hidden="true">&#9998;</span>
+            <span>Quick Edit</span>
+            <span class="context-menu-shortcut">F2</span>
+        </div>
+        <div class="context-menu-separator" role="separator"></div>
+        <div class="context-menu-item" onclick="contextAction('new-child')" role="menuitem" tabindex="0">
+            <span class="context-menu-icon" aria-hidden="true">+</span>
+            <span>New Child</span>
+        </div>
+        <div class="context-menu-item" onclick="contextAction('change-state')" role="menuitem" tabindex="0">
+            <span class="context-menu-icon" aria-hidden="true">&#8634;</span>
+            <span>Change State</span>
+        </div>
+        <div class="context-menu-separator" role="separator"></div>
+        <div class="context-menu-item" onclick="contextAction('copy')" role="menuitem" tabindex="0">
+            <span class="context-menu-icon" aria-hidden="true">&#128203;</span>
+            <span>Copy</span>
+            <span class="context-menu-shortcut">Ctrl+C</span>
+        </div>
+        <div class="context-menu-item" onclick="contextAction('delete')" role="menuitem" tabindex="0">
+            <span class="context-menu-icon" aria-hidden="true">&#128465;</span>
+            <span>Delete</span>
+            <span class="context-menu-shortcut">Del</span>
+        </div>
+    </div>
+    
+    <!-- Quick Edit Panel -->
+    <div class="quick-edit-panel" id="quick-edit-panel" role="dialog" aria-modal="true" aria-labelledby="quick-edit-title">
+        <div class="quick-edit-header" id="quick-edit-title">Edit Work Item</div>
+        <div class="quick-edit-field">
+            <label class="quick-edit-label" for="quick-edit-title-input">Title</label>
+            <input type="text" class="quick-edit-input" id="quick-edit-title-input" aria-required="true">
+        </div>
+        <div class="quick-edit-field">
+            <label class="quick-edit-label" for="quick-edit-state-input">State</label>
+            <select class="quick-edit-input" id="quick-edit-state-input">
+                <option value="new">New</option>
+                <option value="active">Active</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+            </select>
+        </div>
+        <div class="quick-edit-field">
+            <label class="quick-edit-label" for="quick-edit-assigned-input">Assigned To</label>
+            <input type="text" class="quick-edit-input" id="quick-edit-assigned-input" placeholder="Search users...">
+        </div>
+        <div class="quick-edit-actions">
+            <button class="ado-btn ado-btn-default" onclick="closeQuickEdit()">Cancel</button>
+            <button class="ado-btn ado-btn-primary" onclick="saveQuickEdit()">Save</button>
+        </div>
+    </div>
+    
+    <!-- Settings Panel -->
+    <div class="overlay" id="overlay" onclick="toggleSettings()" role="presentation"></div>
+    <div class="settings-panel" id="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+        <div class="settings-header">
+            <span class="settings-title" id="settings-title">Gantt Settings</span>
+            <button class="settings-close" onclick="toggleSettings()" aria-label="Close settings">&times;</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <div class="settings-section-title">Display Options</div>
+                
+                <div class="settings-field">
+                    <div class="settings-toggle" onclick="toggleSetting(this)" role="switch" aria-checked="true" tabindex="0">
+                        <span class="settings-toggle-text">Show weekends</span>
+                        <div class="toggle-switch active">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                    </div>
+                    <div class="settings-description">Display Saturday and Sunday on the timeline</div>
+                </div>
+                
+                <div class="settings-field">
+                    <div class="settings-toggle" onclick="toggleSetting(this)" role="switch" aria-checked="true" tabindex="0">
+                        <span class="settings-toggle-text">Show progress</span>
+                        <div class="toggle-switch active">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                    </div>
+                    <div class="settings-description">Show progress percentage inside task bars</div>
+                </div>
+                
+                <div class="settings-field">
+                    <div class="settings-toggle" onclick="toggleSetting(this)" role="switch" aria-checked="true" tabindex="0">
+                        <span class="settings-toggle-text">Show today marker</span>
+                        <div class="toggle-switch active">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-field">
+                    <div class="settings-toggle" onclick="toggleSetting(this)" role="switch" aria-checked="false" tabindex="0">
+                        <span class="settings-toggle-text">Highlight critical path</span>
+                        <div class="toggle-switch">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-section-title">Default View</div>
+                
+                <div class="settings-field">
+                    <label class="settings-label" for="settings-zoom">Default zoom level</label>
+                    <select class="ado-select" id="settings-zoom">
+                        <option>Week</option>
+                        <option>Day</option>
+                        <option>Month</option>
+                        <option>Quarter</option>
+                    </select>
+                </div>
+                
+                <div class="settings-field">
+                    <label class="settings-label" for="settings-height">Task bar height</label>
+                    <select class="ado-select" id="settings-height">
+                        <option>Compact (20px)</option>
+                        <option selected>Normal (24px)</option>
+                        <option>Comfortable (32px)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-section-title">Notifications</div>
+                
+                <div class="settings-field">
+                    <div class="settings-toggle" onclick="toggleSetting(this)" role="switch" aria-checked="true" tabindex="0">
+                        <span class="settings-toggle-text">Email notifications</span>
+                        <div class="toggle-switch active">
+                            <div class="toggle-thumb"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="settings-footer">
+            <button class="ado-btn ado-btn-default" onclick="resetSettings()">Reset to defaults</button>
+            <button class="ado-btn ado-btn-primary" onclick="saveSettings()">Save changes</button>
+        </div>
+    </div>
+    
+    <!-- dhtmlx-gantt -->
+    <script src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script>
+    
+    <script>
+        // ============================================
+        // THEME MANAGEMENT
+        // ============================================
+        function initTheme() {
+            const savedTheme = localStorage.getItem('ado-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+        
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('ado-theme', newTheme);
+            updateThemeIcon(newTheme);
+            
+            // Announce theme change to screen readers
+            announceToScreenReader(`Switched to ${newTheme} mode`);
+        }
+        
+        function updateThemeIcon(theme) {
+            const btn = document.getElementById('theme-toggle');
+            const icon = btn.querySelector('.theme-icon');
+            btn.setAttribute('aria-pressed', theme === 'dark');
+            icon.innerHTML = theme === 'dark' ? '&#9790;' : '&#9788;';
+        }
+        
+        // ============================================
+        // ACCESSIBILITY HELPERS
+        // ============================================
+        function announceToScreenReader(message) {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('role', 'status');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.className = 'sr-only';
+            announcement.style.position = 'absolute';
+            announcement.style.left = '-10000px';
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            setTimeout(() => announcement.remove(), 1000);
+        }
+        
+        // ============================================
+        // GANTT CONFIGURATION
+        // ============================================
+        const icons = {
+            epic: '<span class="wi-icon wi-epic" aria-hidden="true">E</span>',
+            feature: '<span class="wi-icon wi-feature" aria-hidden="true">F</span>',
+            story: '<span class="wi-icon wi-story" aria-hidden="true">S</span>',
+            task: '<span class="wi-icon wi-task" aria-hidden="true">T</span>',
+            bug: '<span class="wi-icon wi-bug" aria-hidden="true">B</span>'
+        };
+        
+        const states = {
+            new: { class: 'state-new', badgeClass: 'state-badge-new', color: '#b2b2b2', label: 'New' },
+            active: { class: 'state-active', badgeClass: 'state-badge-active', color: '#007acc', label: 'Active' },
+            resolved: { class: 'state-resolved', badgeClass: 'state-badge-resolved', color: '#ff9d00', label: 'Resolved' },
+            closed: { class: 'state-closed', badgeClass: 'state-badge-closed', color: '#339933', label: 'Closed' }
+        };
+        
+        gantt.config.date_format = "%Y-%m-%d %H:%i";
+        gantt.config.scales = [
+            {unit: "month", step: 1, format: "%F %Y"},
+            {unit: "week", step: 1, format: "Week #%W"}
+        ];
+        
+        gantt.config.columns = [
+            {name: "type", label: "Type", width: 90, align: "left", template: function(task) {
+                return `<span class="type-badge">${icons[task.wiType] || icons.task} ${capitalize(task.wiType)}</span>`;
+            }},
+            {name: "id", label: "ID", width: 65, align: "left", template: function(task) {
+                return `<a href="#" class="wi-id" aria-label="Work item ${1000 + parseInt(task.id)}">#${1000 + parseInt(task.id)}</a>`;
+            }},
+            {name: "text", label: "Title", width: 280, tree: true, template: function(task) {
+                return `<span title="${task.text}">${task.text}</span>`;
+            }},
+            {name: "state", label: "State", width: 85, align: "center", template: function(task) {
+                const state = states[task.state];
+                return `<span class="state-badge ${state ? state.badgeClass : ''}" aria-label="State: ${state ? state.label : task.state}">${state ? state.label : capitalize(task.state)}</span>`;
+            }},
+            {name: "start_date", label: "Start", width: 95, align: "center", editor: {type: "date", map_to: "start_date"}},
+            {name: "duration", label: "Duration", width: 75, align: "center", template: function(task) {
+                return task.duration + " days";
+            }, editor: {type: "number", map_to: "duration", min: 1}}
+        ];
+        
+        gantt.config.readonly = false;
+        gantt.config.drag_progress = true;
+        gantt.config.drag_links = false;
+        gantt.config.drag_move = true;
+        gantt.config.drag_resize = true;
+        gantt.config.row_height = 36;
+        gantt.config.bar_height = 24;
+        gantt.config.grid_width = 520;
+        
+        gantt.plugins({ tooltip: true, marker: true, keyboard_navigation: true });
+        
+        // Templates
+        gantt.templates.tooltip_text = function(start, end, task) {
+            const state = states[task.state];
+            const stateHtml = state ? `<span class="state-badge ${state.badgeClass}">${state.label}</span>` : capitalize(task.state);
+            return `
+                <div class="gantt-tooltip-title">${icons[task.wiType] || ''} ${task.text}</div>
+                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">Type:</span><span>${capitalize(task.wiType)}</span></div>
+                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">State:</span><span>${stateHtml}</span></div>
+                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">ID:</span><span>#${1000 + parseInt(task.id)}</span></div>
+                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">Start:</span><span>${gantt.templates.format_date(start)}</span></div>
+                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">End:</span><span>${gantt.templates.format_date(end)}</span></div>
+                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">Duration:</span><span>${task.duration} days</span></div>
+                ${task.progress ? `<div class="gantt-tooltip-row"><span class="gantt-tooltip-label">Progress:</span><span>${Math.round(task.progress * 100)}%</span></div>` : ''}
+            `;
+        };
+        
+        gantt.templates.task_class = function(start, end, task) {
+            const state = states[task.state];
+            return state ? state.class : '';
+        };
+        
+        gantt.templates.task_text = function(start, end, task) {
+            return `<span style="padding: 0 8px;">${icons[task.wiType] || ''} ${task.text}</span>`;
+        };
+        
+        gantt.templates.grid_row_class = function(start, end, task) {
+            return 'type-' + task.wiType;
+        };
+        
+        function capitalize(str) {
+            return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+        }
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        initTheme();
+        gantt.init("gantt_here");
+        
+        // Context Menu
+        let contextTaskId = null;
+        const contextMenu = document.getElementById('context-menu');
+        
+        gantt.attachEvent("onContextMenu", function(taskId, linkId, event) {
+            if (taskId) {
+                event.preventDefault();
+                contextTaskId = taskId;
+                const task = gantt.getTask(taskId);
+                document.getElementById('context-menu-title').textContent = `#${1000 + parseInt(task.id)} - ${task.text}`;
+                contextMenu.style.left = event.clientX + 'px';
+                contextMenu.style.top = event.clientY + 'px';
+                contextMenu.classList.add('visible');
+                gantt.selectTask(taskId);
+                return false;
+            }
+            return true;
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!contextMenu.contains(e.target)) contextMenu.classList.remove('visible');
+            if (!document.querySelector('.export-menu').contains(e.target)) {
+                document.getElementById('export-dropdown').classList.remove('visible');
+                document.getElementById('export-btn').setAttribute('aria-expanded', 'false');
+            }
+        });
+        
+        function contextAction(action) {
+            contextMenu.classList.remove('visible');
+            if (!contextTaskId) return;
+            const task = gantt.getTask(contextTaskId);
+            
+            switch(action) {
+                case 'open':
+                    announceToScreenReader(`Opening work item ${task.text}`);
+                    alert(`Opening #${1000 + parseInt(task.id)}`);
+                    break;
+                case 'edit':
+                    showQuickEdit(contextTaskId);
+                    break;
+                case 'new-child':
+                    announceToScreenReader('Creating new child work item');
+                    alert('Creating new child...');
+                    break;
+                case 'change-state':
+                    const statesList = ['new', 'active', 'resolved', 'closed'];
+                    const currentIdx = statesList.indexOf(task.state);
+                    task.state = statesList[(currentIdx + 1) % statesList.length];
+                    gantt.updateTask(contextTaskId);
+                    updateStats();
+                    announceToScreenReader(`State changed to ${task.state}`);
+                    break;
+                case 'copy':
+                    announceToScreenReader('Copied to clipboard');
+                    alert('Copied to clipboard');
+                    break;
+                case 'delete':
+                    if (confirm(`Delete #${1000 + parseInt(task.id)}?`)) {
+                        gantt.deleteTask(contextTaskId);
+                        updateStats();
+                        announceToScreenReader('Work item deleted');
+                    }
+                    break;
+            }
+        }
+        
+        // Quick Edit
+        let quickEditTaskId = null;
+        const quickEditPanel = document.getElementById('quick-edit-panel');
+        
+        function showQuickEdit(taskId) {
+            quickEditTaskId = taskId;
+            const task = gantt.getTask(taskId);
+            document.getElementById('quick-edit-title').textContent = `Edit #${1000 + parseInt(task.id)}`;
+            document.getElementById('quick-edit-title-input').value = task.text;
+            document.getElementById('quick-edit-state-input').value = task.state;
+            quickEditPanel.classList.add('visible');
+            document.getElementById('quick-edit-title-input').focus();
+            announceToScreenReader('Quick edit panel opened');
+        }
+        
+        function closeQuickEdit() {
+            quickEditPanel.classList.remove('visible');
+            quickEditTaskId = null;
+        }
+        
+        function saveQuickEdit() {
+            if (quickEditTaskId) {
+                const task = gantt.getTask(quickEditTaskId);
+                task.text = document.getElementById('quick-edit-title-input').value;
+                task.state = document.getElementById('quick-edit-state-input').value;
+                gantt.updateTask(quickEditTaskId);
+                updateStats();
+                announceToScreenReader('Changes saved');
+            }
+            closeQuickEdit();
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                contextMenu.classList.remove('visible');
+                closeQuickEdit();
+                if (document.getElementById('settings-panel').classList.contains('visible')) {
+                    toggleSettings();
+                }
+            }
+            if (e.key === 'F2') {
+                const selected = gantt.getSelectedId();
+                if (selected) showQuickEdit(selected);
+            }
+        });
+        
+        gantt.attachEvent("onTaskDblClick", function(id, e) {
+            showQuickEdit(id);
+            return false;
+        });
+        
+        // ============================================
+        // MOCK DATA
+        // ============================================
+        const today = new Date();
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        function addDays(date, days) {
+            const result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
+        
+        function formatDate(date) {
+            return date.toISOString().split('T')[0] + " 00:00";
+        }
+        
+        const mockData = {
+            data: [
+                { id: 1, text: "Q1 Product Development Initiative", start_date: formatDate(startOfMonth), duration: 60, progress: 0.45, open: true, wiType: "epic", state: "active" },
+                { id: 2, text: "User Authentication System", start_date: formatDate(addDays(startOfMonth, 0)), duration: 25, progress: 0.8, parent: 1, open: true, wiType: "feature", state: "active" },
+                { id: 3, text: "Reporting Dashboard", start_date: formatDate(addDays(startOfMonth, 20)), duration: 35, progress: 0.2, parent: 1, open: true, wiType: "feature", state: "new" },
+                { id: 4, text: "Implement OAuth 2.0 Login", start_date: formatDate(addDays(startOfMonth, 0)), duration: 10, progress: 1.0, parent: 2, wiType: "story", state: "closed" },
+                { id: 5, text: "Multi-Factor Authentication", start_date: formatDate(addDays(startOfMonth, 8)), duration: 12, progress: 0.9, parent: 2, wiType: "story", state: "resolved" },
+                { id: 6, text: "Password Reset Flow", start_date: formatDate(addDays(startOfMonth, 15)), duration: 8, progress: 0.3, parent: 2, wiType: "story", state: "active" },
+                { id: 7, text: "Design Dashboard Layout", start_date: formatDate(addDays(startOfMonth, 20)), duration: 8, progress: 0.5, parent: 3, wiType: "story", state: "active" },
+                { id: 8, text: "Data Visualization Components", start_date: formatDate(addDays(startOfMonth, 25)), duration: 15, progress: 0.0, parent: 3, wiType: "story", state: "new" },
+                { id: 9, text: "Export Reports to PDF", start_date: formatDate(addDays(startOfMonth, 40)), duration: 10, progress: 0.0, parent: 3, wiType: "story", state: "new" },
+                { id: 10, text: "Setup OAuth Provider", start_date: formatDate(addDays(startOfMonth, 0)), duration: 3, parent: 4, wiType: "task", state: "closed" },
+                { id: 11, text: "Implement Login UI", start_date: formatDate(addDays(startOfMonth, 2)), duration: 4, parent: 4, wiType: "task", state: "closed" },
+                { id: 12, text: "Token Management", start_date: formatDate(addDays(startOfMonth, 5)), duration: 4, parent: 4, wiType: "task", state: "closed" },
+                { id: 13, text: "SMS Integration", start_date: formatDate(addDays(startOfMonth, 8)), duration: 5, parent: 5, wiType: "task", state: "resolved" },
+                { id: 14, text: "TOTP Support", start_date: formatDate(addDays(startOfMonth, 12)), duration: 5, parent: 5, wiType: "task", state: "active" },
+                { id: 15, text: "Backup Codes", start_date: formatDate(addDays(startOfMonth, 16)), duration: 3, parent: 5, wiType: "task", state: "new" },
+                { id: 16, text: "Email Templates", start_date: formatDate(addDays(startOfMonth, 15)), duration: 3, parent: 6, wiType: "task", state: "active" },
+                { id: 17, text: "Reset Service", start_date: formatDate(addDays(startOfMonth, 17)), duration: 4, parent: 6, wiType: "task", state: "new" },
+                { id: 18, text: "Wireframes", start_date: formatDate(addDays(startOfMonth, 20)), duration: 4, parent: 7, wiType: "task", state: "resolved" },
+                { id: 19, text: "Mockups", start_date: formatDate(addDays(startOfMonth, 23)), duration: 4, parent: 7, wiType: "task", state: "active" },
+                { id: 20, text: "Chart Library", start_date: formatDate(addDays(startOfMonth, 25)), duration: 7, parent: 8, wiType: "task", state: "new" },
+                { id: 21, text: "Real-time Data", start_date: formatDate(addDays(startOfMonth, 32)), duration: 6, parent: 8, wiType: "task", state: "new" }
+            ]
+        };
+        
+        // Show loading
+        document.getElementById('gantt-loading').classList.add('visible');
+        
+        setTimeout(() => {
+            gantt.parse(mockData);
+            gantt.addMarker({
+                start_date: new Date(),
+                css: "today",
+                text: "Today",
+                title: "Today: " + gantt.templates.format_date(new Date())
+            });
+            document.getElementById('gantt-loading').classList.remove('visible');
+            gantt.showDate(new Date());
+            updateStats();
+            announceToScreenReader('Gantt chart loaded with 21 work items');
+        }, 500);
+        
+        // Update statistics
+        function updateStats() {
+            const tasks = gantt.getTaskCount();
+            let completed = 0;
+            let totalProgress = 0;
+            
+            gantt.eachTask(function(task) {
+                if (task.state === 'closed') completed++;
+                totalProgress += (task.progress || 0);
+            });
+            
+            const avgProgress = Math.round((totalProgress / tasks) * 100);
+            
+            document.getElementById('stat-total').textContent = tasks;
+            document.getElementById('stat-completed').textContent = completed;
+            document.getElementById('progress-percent').textContent = avgProgress + '%';
+            document.getElementById('progress-bar').style.width = avgProgress + '%';
+            document.getElementById('progress-bar').setAttribute('aria-valuenow', avgProgress);
+            document.getElementById('status-count').textContent = tasks + ' work items loaded';
+        }
+        
+        // Functions
+        function zoomTo(level) {
+            document.querySelectorAll('.ado-btn').forEach(btn => {
+                if (btn.id && btn.id.startsWith('btn-')) {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-pressed', 'false');
+                }
+            });
+            const activeBtn = document.getElementById('btn-' + level);
+            activeBtn.classList.add('active');
+            activeBtn.setAttribute('aria-pressed', 'true');
+            
+            switch(level) {
+                case 'day':
+                    gantt.config.scales = [{unit: "day", step: 1, format: "%d %M"}, {unit: "hour", step: 4, format: "%H:%i"}];
+                    break;
+                case 'week':
+                    gantt.config.scales = [{unit: "month", step: 1, format: "%F %Y"}, {unit: "week", step: 1, format: "Week #%W"}];
+                    break;
+                case 'month':
+                    gantt.config.scales = [{unit: "month", step: 1, format: "%F %Y"}, {unit: "day", step: 1, format: "%d"}];
+                    break;
+                case 'quarter':
+                    gantt.config.scales = [{unit: "year", step: 1, format: "%Y"}, {unit: "month", step: 1, format: "%M"}];
+                    break;
+            }
+            gantt.render();
+            announceToScreenReader(`Zoom changed to ${level} view`);
+        }
+        
+        function expandAll() {
+            gantt.eachTask(function(task){ task.$open = true; });
+            gantt.render();
+            announceToScreenReader('All rows expanded');
+        }
+        
+        function collapseAll() {
+            gantt.eachTask(function(task){ task.$open = false; });
+            gantt.render();
+            announceToScreenReader('All rows collapsed');
+        }
+        
+        function switchView(view) {
+            document.querySelectorAll('.view-option').forEach(opt => {
+                opt.classList.remove('active');
+                opt.setAttribute('aria-checked', 'false');
+            });
+            event.target.classList.add('active');
+            event.target.setAttribute('aria-checked', 'true');
+            announceToScreenReader(`Switched to ${view} view`);
+        }
+        
+        function showNewItemDialog() {
+            announceToScreenReader('New item dialog opened');
+            alert('New Item dialog would open here');
+        }
+        
+        function toggleExportMenu() {
+            const dropdown = document.getElementById('export-dropdown');
+            const btn = document.getElementById('export-btn');
+            const isVisible = dropdown.classList.toggle('visible');
+            btn.setAttribute('aria-expanded', isVisible);
+        }
+        
+        function exportChart(format) {
+            document.getElementById('export-dropdown').classList.remove('visible');
+            document.getElementById('export-btn').setAttribute('aria-expanded', 'false');
+            announceToScreenReader(`Exporting as ${format.toUpperCase()}`);
+            alert(`Exporting as ${format.toUpperCase()}...`);
+        }
+        
+        function printChart() {
+            document.getElementById('export-dropdown').classList.remove('visible');
+            document.getElementById('export-btn').setAttribute('aria-expanded', 'false');
+            window.print();
+        }
+        
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            const overlay = document.getElementById('overlay');
+            const isVisible = panel.classList.toggle('visible');
+            overlay.classList.toggle('visible');
+            if (isVisible) {
+                announceToScreenReader('Settings panel opened');
+                panel.querySelector('.settings-close').focus();
+            } else {
+                announceToScreenReader('Settings panel closed');
+            }
+        }
+        
+        function toggleSetting(element) {
+            const toggle = element.querySelector('.toggle-switch');
+            const isActive = toggle.classList.toggle('active');
+            element.setAttribute('aria-checked', isActive);
+        }
+        
+        function resetSettings() {
+            if (confirm('Reset all settings to defaults?')) {
+                announceToScreenReader('Settings reset to defaults');
+                alert('Settings reset');
+            }
+        }
+        
+        function saveSettings() {
+            toggleSettings();
+            announceToScreenReader('Settings saved');
+            alert('Settings saved');
+        }
+        
+        // Filter handlers
+        document.querySelectorAll('.ado-checkbox input').forEach(checkbox => {
+            checkbox.addEventListener('change', applyFilters);
+        });
+        
+        document.querySelectorAll('.ado-select').forEach(select => {
+            select.addEventListener('change', applyFilters);
+        });
+        
+        function applyFilters() {
+            console.log('Filters applied');
+        }
+    </script>
+</body>
+</html>

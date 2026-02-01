@@ -17,12 +17,7 @@
   "icons": {
     "default": "static/images/logo.png"
   },
-  "screenshots": [
-    {
-      "path": "screenshots/gantt-main-view.png",
-      "description": "Main Gantt chart view showing work items"
-    }
-  ],
+  "screenshots": [],
   "content": {
     "details": {
       "path": "README.md"
