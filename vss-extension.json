@@ -1,0 +1,93 @@
+{
+  "manifestVersion": 1,
+  "id": "gantt-chart-extension",
+  "version": "1.0.0",
+  "name": "Gantt Chart for Azure Boards",
+  "publisher": "your-publisher",
+  "description": "Visualize work items in an interactive Gantt chart view. Supports hierarchy, dependencies, and real-time updates.",
+  "public": false,
+  "galleryFlags": ["Preview"],
+  "categories": ["Azure Boards"],
+  "tags": ["gantt", "chart", "timeline", "planning", "schedule", "roadmap", "work-items"],
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "icons": {
+    "default": "static/images/logo.png"
+  },
+  "screenshots": [
+    {
+      "path": "screenshots/gantt-main-view.png",
+      "description": "Main Gantt chart view showing work items"
+    }
+  ],
+  "content": {
+    "details": {
+      "path": "README.md"
+    },
+    "license": {
+      "path": "LICENSE"
+    }
+  },
+  "links": {
+    "getstarted": {
+      "uri": "https://github.com/your-org/ado-gantt-extension#get-started"
+    },
+    "learn": {
+      "uri": "https://github.com/your-org/ado-gantt-extension/wiki"
+    },
+    "support": {
+      "uri": "https://github.com/your-org/ado-gantt-extension/issues"
+    },
+    "repository": {
+      "uri": "https://github.com/your-org/ado-gantt-extension"
+    },
+    "issues": {
+      "uri": "https://github.com/your-org/ado-gantt-extension/issues"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/your-org/ado-gantt-extension"
+  },
+  "branding": {
+    "color": "rgb(0, 120, 212)",
+    "theme": "dark"
+  },
+  "scopes": [
+    "vso.work",
+    "vso.work_write"
+  ],
+  "contributions": [
+    {
+      "id": "gantt-hub",
+      "type": "ms.vss-web.hub",
+      "targets": [
+        "ms.vss-work-web.work-hub-group"
+      ],
+      "properties": {
+        "name": "Gantt",
+        "order": 50,
+        "uri": "dist/gantt.html",
+        "icon": "asset://static/images/gantt-icon.png",
+        "supportsMobile": false
+      }
+    }
+  ],
+  "files": [
+    {
+      "path": "dist",
+      "addressable": true
+    },
+    {
+      "path": "static",
+      "addressable": true
+    },
+    {
+      "path": "screenshots",
+      "addressable": true
+    }
+  ]
+}

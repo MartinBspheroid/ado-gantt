@@ -1,0 +1,65 @@
+.gantt-chart-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--background-color, #ffffff);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.gantt-chart {
+  width: 100%;
+  height: 100%;
+}
+
+.gantt-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  padding: 16px 24px;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: var(--primary-color, #0078d4);
+  font-weight: 500;
+}
+
+.gantt_task_line {
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.gantt-task-state-new .gantt_task_line {
+  background-color: #deecf9;
+  border: 1px solid #0078d4;
+}
+
+.gantt-task-state-active .gantt_task_line {
+  background-color: #fff4e5;
+  border: 1px solid #ff8c00;
+}
+
+.gantt-task-state-resolved .gantt_task_line {
+  background-color: #f3f2f1;
+  border: 1px solid #773b93;
+}
+
+.gantt-task-state-closed .gantt_task_line {
+  background-color: #dff6dd;
+  border: 1px solid #107c10;
+}
+
+.gantt-today-marker {
+  background-color: #d13438;
+  color: white;
+}

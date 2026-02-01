@@ -1,0 +1,49 @@
+{
+  "name": "ado-gantt-extension",
+  "version": "1.0.0",
+  "description": "Gantt Chart extension for Azure DevOps Boards",
+  "private": true,
+  "scripts": {
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "watch": "webpack --mode development --watch",
+    "clean": "rimraf dist",
+    "package": "tfx extension create --rev-version",
+    "package:dev": "tfx extension create --rev-version --manifests vss-extension.json --overrides-file config/dev.json",
+    "publish": "tfx extension publish",
+    "publish:dev": "tfx extension publish --manifests vss-extension.json --overrides-file config/dev.json --share-with",
+    "lint": "eslint src/**/*.ts*",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "azure-devops-extension-api": "^2.225.0",
+    "azure-devops-extension-sdk": "^4.0.2",
+    "azure-devops-ui": "^2.167.0",
+    "dhtmlx-gantt": "^8.0.0",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.14.0",
+    "@types/react-dom": "^16.9.0",
+    "css-loader": "^6.8.0",
+    "rimraf": "^5.0.0",
+    "style-loader": "^3.3.0",
+    "ts-loader": "^9.4.0",
+    "tfx-cli": "^0.17.0",
+    "typescript": "^5.0.0",
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.0"
+  },
+  "keywords": [
+    "azure-devops",
+    "extension",
+    "gantt",
+    "boards",
+    "work-items",
+    "timeline",
+    "roadmap"
+  ],
+  "author": "Martin",
+  "license": "MIT"
+}
