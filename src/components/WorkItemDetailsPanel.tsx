@@ -54,11 +54,32 @@ export const WorkItemDetailsPanel: React.FC<WorkItemDetailsPanelProps> = ({
   };
 
   return (
-    <div className="details-panel-overlay" onClick={onClose}>
-      <div className="details-panel" onClick={e => e.stopPropagation()}>
+    <div 
+      className="details-panel-overlay" 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="details-panel-title"
+    >
+      <div 
+        className="details-panel" 
+        onClick={e => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            onClose();
+          }
+        }}
+        tabIndex={-1}
+      >
         <div className="details-panel-header">
-          <h2>Work Item {editedWorkItem.id}</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <h2 id="details-panel-title">Work Item {editedWorkItem.id}</h2>
+          <button 
+            className="close-btn" 
+            onClick={onClose}
+            aria-label="Close details panel"
+          >
+            ×
+          </button>
         </div>
 
         <div className="work-item-details">
@@ -67,6 +88,8 @@ export const WorkItemDetailsPanel: React.FC<WorkItemDetailsPanelProps> = ({
             <span 
               className="work-item-state"
               style={{ backgroundColor: stateColor.backgroundColor, color: stateColor.color }}
+              role="status"
+              aria-label={`State: ${editedWorkItem.state}`}
             >
               {editedWorkItem.state}
             </span>
@@ -81,21 +104,25 @@ export const WorkItemDetailsPanel: React.FC<WorkItemDetailsPanelProps> = ({
             <h3>Schedule</h3>
             <div className="form-row">
               <div className="form-field">
-                <label>Start Date</label>
+                <label htmlFor="start-date">Start Date</label>
                 <input
+                  id="start-date"
                   type="date"
                   value={formatDateForInput(editedWorkItem.startDate)}
                   onChange={handleStartDateChange}
                   disabled={isSaving}
+                  aria-label="Start date"
                 />
               </div>
               <div className="form-field">
-                <label>Target Date</label>
+                <label htmlFor="target-date">Target Date</label>
                 <input
+                  id="target-date"
                   type="date"
                   value={formatDateForInput(editedWorkItem.targetDate)}
                   onChange={handleTargetDateChange}
                   disabled={isSaving}
+                  aria-label="Target date"
                 />
               </div>
             </div>
@@ -124,12 +151,14 @@ export const WorkItemDetailsPanel: React.FC<WorkItemDetailsPanelProps> = ({
               className="save-btn"
               onClick={handleSave}
               disabled={isSaving}
+              aria-label={isSaving ? 'Saving changes' : 'Save changes'}
             >
               {isSaving ? 'Saving...' : 'Save Changes'}
             </button>
             <button 
               className="link-btn"
               onClick={() => window.open(adoUrl, '_blank')}
+              aria-label="Open work item in Azure DevOps"
             >
               Open in Azure DevOps
             </button>

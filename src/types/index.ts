@@ -235,3 +235,12 @@ export interface WorkItemDetailsPanelProps {
   onClose: () => void;
   onSave: (workItem: WorkItem) => Promise<void>;
 }
+
+// Error handling types
+export interface ErrorDetails {
+  type: 'permission' | 'network' | 'query' | 'unknown';
+  message: string;
+  userAction?: string;
+  helpLink?: string;
+  technicalDetails?: string;
+}

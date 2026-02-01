@@ -3,6 +3,7 @@ import { GanttToolbarProps, ZoomLevel, WorkItemType, WorkItemState, GroupByOptio
 import { SavedBoardsSelector } from "./SavedBoardsSelector";
 import { GroupBySelector } from "./GroupBySelector";
 import { ProgressSummary } from "./ProgressSummary";
+import { ThemeToggle } from "./ThemeToggle";
 import "../styles/GanttToolbar.css";
 
 const WORK_ITEM_TYPES: { id: WorkItemType; text: string }[] = [
@@ -94,14 +95,16 @@ export const GanttToolbar: React.FC<GanttToolbarProps> = ({
 
       <div className="toolbar-section toolbar-filters">
         <div className="filter-group">
-          <label>Types:</label>
-          <div className="filter-buttons">
+          <label id="type-filter-label">Types:</label>
+          <div className="filter-buttons" role="group" aria-labelledby="type-filter-label">
             {WORK_ITEM_TYPES.map(type => (
               <button
                 key={type.id}
                 className={`filter-btn ${filters.workItemTypes.includes(type.id) ? 'active' : ''}`}
                 onClick={() => handleWorkItemTypeToggle(type.id)}
                 disabled={isLoading}
+                aria-pressed={filters.workItemTypes.includes(type.id)}
+                aria-label={`Filter by ${type.text}`}
               >
                 {type.text}
               </button>
@@ -110,14 +113,16 @@ export const GanttToolbar: React.FC<GanttToolbarProps> = ({
         </div>
 
         <div className="filter-group">
-          <label>States:</label>
-          <div className="filter-buttons">
+          <label id="state-filter-label">States:</label>
+          <div className="filter-buttons" role="group" aria-labelledby="state-filter-label">
             {STATES.map(state => (
               <button
                 key={state.id}
                 className={`filter-btn ${filters.states.includes(state.id) ? 'active' : ''}`}
                 onClick={() => handleStateToggle(state.id)}
                 disabled={isLoading}
+                aria-pressed={filters.states.includes(state.id)}
+                aria-label={`Filter by ${state.text} state`}
               >
                 {state.text}
               </button>
@@ -146,6 +151,8 @@ export const GanttToolbar: React.FC<GanttToolbarProps> = ({
                 className={`filter-btn ${zoom === level.id ? 'active' : ''}`}
                 onClick={() => onZoomChange(level.id)}
                 disabled={isLoading}
+                aria-pressed={zoom === level.id}
+                aria-label={`Zoom to ${level.text.toLowerCase()} view`}
               >
                 {level.text}
               </button>
@@ -153,10 +160,13 @@ export const GanttToolbar: React.FC<GanttToolbarProps> = ({
           </div>
         </div>
 
+        <ThemeToggle disabled={isLoading} />
+
         <button 
           className="refresh-btn"
           onClick={onRefresh}
           disabled={isLoading}
+          aria-label="Refresh work items"
         >
           {isLoading ? 'Loading...' : 'Refresh'}
         </button>

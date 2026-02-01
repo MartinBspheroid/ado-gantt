@@ -108,3 +108,50 @@
     width: 100%;
   }
 }
+
+/* Dark mode styles */
+.dark-mode .gantt-toolbar {
+  background: #252525;
+  border-bottom-color: #3b3a39;
+}
+
+.dark-mode .filter-group label,
+.dark-mode .zoom-controls label {
+  color: #c8c6c4;
+}
+
+.dark-mode .filter-btn {
+  background: #323130;
+  border-color: #3b3a39;
+  color: #f3f2f1;
+}
+
+.dark-mode .filter-btn:hover:not(:disabled) {
+  background: #3b3a39;
+}
+
+.dark-mode .filter-btn.active {
+  background: #0078d4;
+  border-color: #0078d4;
+  color: white;
+}
+
+.dark-mode .refresh-btn {
+  background: #0078d4;
+}
+
+.dark-mode .refresh-btn:hover:not(:disabled) {
+  background: #106ebe;
+}
+
+/* Focus indicators for accessibility */
+.filter-btn:focus,
+.refresh-btn:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.dark-mode .filter-btn:focus,
+.dark-mode .refresh-btn:focus {
+  outline-color: #2899f5;
+}

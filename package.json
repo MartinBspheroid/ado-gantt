@@ -30,6 +30,8 @@
     "azure-devops-extension-sdk": "^4.0.2",
     "azure-devops-ui": "^2.167.0",
     "dhtmlx-gantt": "^8.0.0",
+    "html-to-image": "^1.11.13",
+    "jspdf": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -168,16 +168,27 @@ export const GanttChart: React.FC<GanttChartProps> = ({
   };
 
   return (
-    <div className="gantt-chart-container">
+    <div 
+      className="gantt-chart-container"
+      role="region"
+      aria-label="Gantt chart timeline"
+      aria-busy={isLoading}
+    >
       {isLoading && (
-        <div className="gantt-loading-overlay">
-          <div className="loading-spinner">Loading Gantt chart...</div>
+        <div className="gantt-loading-overlay" role="status" aria-live="polite">
+          <div className="loading-spinner" aria-label="Loading Gantt chart">
+            <span className="spinner-icon" aria-hidden="true">⟳</span>
+            <span>Loading Gantt chart...</span>
+          </div>
         </div>
       )}
       <div 
         ref={ganttContainer} 
         className="gantt-chart"
         style={{ width: '100%', height: 'calc(100vh - 200px)' }}
+        role="application"
+        aria-label="Interactive Gantt chart. Use arrow keys to navigate between tasks."
+        tabIndex={0}
       />
     </div>
   );

@@ -14,6 +14,10 @@ Visualize your work items in an interactive Gantt chart view. Plan, track, and m
 - **Real-time Updates**: Changes sync with Azure Boards
 - **Filtering**: Filter by area path, iteration, assignee, and more
 - **Zoom Levels**: View by day, week, month, or quarter
+- **Export**: Export Gantt chart as PNG or PDF
+- **Dark Mode**: Toggle between light and dark themes
+- **Error Handling**: Graceful error handling with user-friendly messages
+- **Accessibility**: Full keyboard navigation and ARIA labels
 
 ### Saved Gantt Boards
 Save and switch between multiple Gantt configurations. Each board stores:
@@ -32,6 +36,24 @@ Timeline-based progress tracking with automatic status indicators:
 
 Visual indicators appear on Gantt bars and a summary shows counts in the header.
 
+### Export Functionality
+Export your Gantt chart for presentations and reports:
+- **PNG Export**: High-resolution image export
+- **PDF Export**: Export as PDF document
+- Timestamped filenames for easy organization
+
+### Dark Mode
+Toggle between light and dark themes:
+- Automatic detection of system preference
+- Manual toggle in toolbar
+- Persistent preference across sessions
+
+### Error Handling
+Comprehensive error handling with actionable messages:
+- **Permission Errors**: Clear messaging when access is denied
+- **Network Errors**: Connection issue detection and recovery
+- **Error Boundary**: Graceful crash recovery with retry options
+
 ### Team Grouping
 Group work items by:
 - Assigned To (swimlane view per team member)
@@ -47,6 +69,14 @@ Support for relative iteration syntax in filters:
 - Supports any offset (+/- n)
 
 This allows saved boards to dynamically adjust to the current sprint context.
+
+### Accessibility
+Full accessibility support:
+- **Keyboard Navigation**: Tab through all interactive elements
+- **ARIA Labels**: Descriptive labels for screen readers
+- **Focus Indicators**: Visible focus states
+- **Reduced Motion**: Respects prefers-reduced-motion setting
+- **High Contrast**: Supports high contrast mode
 
 ## Getting Started
 

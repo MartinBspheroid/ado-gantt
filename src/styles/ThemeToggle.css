@@ -1,0 +1,43 @@
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid #e1dfdd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #323130;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: #f3f2f1;
+  border-color: #c8c6c4;
+}
+
+.theme-toggle:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.theme-toggle-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.theme-toggle-text {
+  font-weight: 500;
+}
+
+/* Dark mode styles */
+.dark-mode .theme-toggle {
+  border-color: #3b3a39;
+  color: #f3f2f1;
+}
+
+.dark-mode .theme-toggle:hover {
+  background: #3b3a39;
+  border-color: #484644;
+}

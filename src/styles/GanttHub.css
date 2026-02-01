@@ -11,6 +11,9 @@
   padding: 16px 24px;
   background: #ffffff;
   border-bottom: 1px solid #e1dfdd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .gantt-hub-header h1 {
@@ -26,6 +29,24 @@
   color: #605e5c;
 }
 
+/* Dark mode styles */
+.dark-mode .gantt-hub-page {
+  background: #1e1e1e;
+}
+
+.dark-mode .gantt-hub-header {
+  background: #252525;
+  border-bottom-color: #3b3a39;
+}
+
+.dark-mode .gantt-hub-header h1 {
+  color: #f3f2f1;
+}
+
+.dark-mode .gantt-hub-header p {
+  color: #c8c6c4;
+}
+
 .gantt-hub-content {
   flex: 1;
   overflow: hidden;
@@ -34,9 +55,120 @@
 
 .error-message {
   margin: 16px;
-  padding: 12px 16px;
+  padding: 16px;
   background: #fde7e9;
-  color: #a80000;
+  border: 1px solid #f1c3c8;
   border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.error-message-content {
+  flex: 1;
+}
+
+.error-message-content strong {
+  display: block;
+  color: #a80000;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.error-message-action {
+  color: #605e5c;
+  font-size: 13px;
+  margin: 4px 0 0 0;
+}
+
+.error-message-link {
+  display: inline-block;
+  color: #0078d4;
+  font-size: 13px;
+  text-decoration: none;
+  margin-top: 8px;
+}
+
+.error-message-link:hover {
+  text-decoration: underline;
+}
+
+.error-message-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #605e5c;
   cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.error-message-close:hover {
+  color: #323130;
+}
+
+.error-message-close:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+/* Permission error styling */
+.error-message--permission {
+  background: #fff4e5;
+  border-color: #ffd7a3;
+}
+
+.error-message--permission strong {
+  color: #8a6d3b;
+}
+
+/* Network error styling */
+.error-message--network {
+  background: #e6f3ff;
+  border-color: #b3d7ff;
+}
+
+.error-message--network strong {
+  color: #005a9e;
+}
+
+/* Dark mode support */
+.dark-mode .error-message {
+  background: #442426;
+  border-color: #5c3739;
+}
+
+.dark-mode .error-message-content strong {
+  color: #f1c3c8;
+}
+
+.dark-mode .error-message-action {
+  color: #c8c6c4;
+}
+
+.dark-mode .error-message-close {
+  color: #c8c6c4;
+}
+
+.dark-mode .error-message-close:hover {
+  color: #f3f2f1;
+}
+
+.dark-mode .error-message--permission {
+  background: #4a3b1f;
+  border-color: #6b542d;
+}
+
+.dark-mode .error-message--permission strong {
+  color: #ffd7a3;
+}
+
+.dark-mode .error-message--network {
+  background: #1a3a52;
+  border-color: #2b5a7c;
+}
+
+.dark-mode .error-message--network strong {
+  color: #b3d7ff;
 }
