@@ -1,5 +1,6 @@
 // Work item state colors matching Azure DevOps
-export type WorkItemState = 'New' | 'Active' | 'Resolved' | 'Closed' | 'Removed';
+// Supports both Agile (New, Active, Resolved, Closed) and Basic (To Do, Doing, Done) processes
+export type WorkItemState = 'New' | 'Active' | 'Resolved' | 'Closed' | 'Removed' | 'To Do' | 'Doing' | 'Done';
 
 export interface StateColor {
   state: WorkItemState;
@@ -8,15 +9,20 @@ export interface StateColor {
 }
 
 export const STATE_COLORS: Record<WorkItemState, StateColor> = {
+  // Agile process states
   'New': { state: 'New', color: '#0078d4', backgroundColor: '#deecf9' },
   'Active': { state: 'Active', color: '#ff8c00', backgroundColor: '#fff4e5' },
   'Resolved': { state: 'Resolved', color: '#773b93', backgroundColor: '#f3f2f1' },
   'Closed': { state: 'Closed', color: '#107c10', backgroundColor: '#dff6dd' },
-  'Removed': { state: 'Removed', color: '#a80000', backgroundColor: '#fde7e9' }
+  'Removed': { state: 'Removed', color: '#a80000', backgroundColor: '#fde7e9' },
+  // Basic process states
+  'To Do': { state: 'To Do', color: '#0078d4', backgroundColor: '#deecf9' },
+  'Doing': { state: 'Doing', color: '#ff8c00', backgroundColor: '#fff4e5' },
+  'Done': { state: 'Done', color: '#107c10', backgroundColor: '#dff6dd' }
 };
 
-// Work item types
-export type WorkItemType = 'Epic' | 'Feature' | 'User Story' | 'Task' | 'Bug';
+// Work item types (supports both Agile and Basic processes)
+export type WorkItemType = 'Epic' | 'Feature' | 'User Story' | 'Task' | 'Bug' | 'Issue';
 
 export interface WorkItem {
   id: number;
@@ -37,6 +43,8 @@ export interface WorkItem {
   changedDate: Date;
   parentId?: number;
   childrenIds: number[];
+  predecessors: number[];
+  successors: number[];
   remainingWork?: number;
   completedWork?: number;
   priority?: number;
@@ -44,20 +52,37 @@ export interface WorkItem {
   description?: string;
 }
 
-// Gantt-specific view model
+// Gantt-specific view model (SVAR format)
 export interface GanttItem {
   id: number;
   text: string;
-  start_date: Date;
-  end_date: Date;
+  start: Date;
+  end: Date;
   duration?: number;
   progress: number;
   parent: number;
-  type: 'task' | 'project';
+  type: 'task' | 'summary';
   open: boolean;
   workItem: WorkItem;
-  color: string;
-  textColor: string;
+  // Custom styling
+  $css?: string;
+}
+
+// Gantt dependency link (SVAR format)
+// Type values: e2s=end-to-start (finish-to-start), s2s=start-to-start, e2e=end-to-end, s2e=start-to-end
+export type GanttLinkType = 'e2s' | 's2s' | 'e2e' | 's2e';
+
+export interface GanttLink {
+  id: string | number;
+  source: number;
+  target: number;
+  type: GanttLinkType;
+}
+
+// Result of converting work items to gantt data
+export interface GanttData {
+  items: GanttItem[];
+  links: GanttLink[];
 }
 
 // Filter configuration
@@ -147,6 +172,7 @@ export interface GanttToolbarProps {
 
 export interface GanttChartProps {
   items: GanttItem[];
+  links: GanttLink[];
   zoom: ZoomLevel;
   onItemClick: (item: GanttItem) => void;
   onItemDrag?: (item: GanttItem, newStart: Date, newEnd: Date) => void;

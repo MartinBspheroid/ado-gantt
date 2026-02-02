@@ -1,10 +1,64 @@
+/* ============================================
+   Gantt Chart - Azure DevOps Style (SVAR)
+   ============================================ */
+
+:root {
+  --gantt-primary: #0078d4;
+  --gantt-epic-color: #773b93;
+  --gantt-feature-color: #009ccc;
+  --gantt-issue-color: #339947;
+  --gantt-task-color: #f2cb1d;
+  --gantt-bug-color: #cc293d;
+  --gantt-grid-border: #e1e1e1;
+  --gantt-row-hover: #f4f4f4;
+  --gantt-today-color: #d13438;
+}
+
+/* SVAR Theme Variables - Azure DevOps Style */
+.gantt-chart-container {
+  /* Task bars */
+  --wx-gantt-task-color: #0078d4;
+  --wx-gantt-task-font-color: #ffffff;
+  --wx-gantt-task-fill-color: #005a9e;
+  --wx-gantt-task-border: 1px solid transparent;
+  --wx-gantt-bar-border-radius: 4px;
+  --wx-gantt-bar-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+
+  /* Summary/Project bars */
+  --wx-gantt-project-color: #605e5c;
+  --wx-gantt-project-font-color: #ffffff;
+  --wx-gantt-project-fill-color: #484644;
+
+  /* Milestone */
+  --wx-gantt-milestone-color: #773b93;
+
+  /* Links */
+  --wx-gantt-link-color: #0078d4;
+  --wx-gantt-link-marker-color: #0078d4;
+
+  /* Grid */
+  --wx-gantt-border: 1px solid #edebe9;
+  --wx-grid-header-font-color: #323130;
+  --wx-grid-body-font-color: #323130;
+  --wx-grid-body-row-border: 1px solid #f3f2f1;
+
+  /* Selection */
+  --wx-gantt-select-color: #deecf9;
+
+  /* Holidays/Weekends */
+  --wx-gantt-holiday-background: #faf9f8;
+  --wx-gantt-holiday-color: #a19f9d;
+}
+
+/* Container */
 .gantt-chart-container {
   position: relative;
   width: 100%;
   height: 100%;
-  background: var(--background-color, #ffffff);
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .gantt-chart {
@@ -12,54 +66,255 @@
   height: 100%;
 }
 
+/* Loading Overlay */
 .gantt-loading-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  backdrop-filter: blur(2px);
 }
 
 .loading-spinner {
-  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 32px;
   background: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  color: var(--primary-color, #0078d4);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.loading-spinner .spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e1e1e1;
+  border-top-color: var(--gantt-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-spinner span {
+  color: #323130;
   font-weight: 500;
+  font-size: 14px;
 }
 
-.gantt_task_line {
-  border-radius: 3px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.gantt-task-state-new .gantt_task_line {
-  background-color: #deecf9;
-  border: 1px solid #0078d4;
+/* ============================================
+   SVAR Gantt Overrides
+   ============================================ */
+
+/* Grid Header */
+.wx-gantt .wx-grid-header {
+  background: #faf9f8 !important;
+  border-bottom: 2px solid var(--gantt-grid-border) !important;
 }
 
-.gantt-task-state-active .gantt_task_line {
-  background-color: #fff4e5;
-  border: 1px solid #ff8c00;
+.wx-gantt .wx-grid-header-cell {
+  font-weight: 600 !important;
+  color: #323130 !important;
+  font-size: 13px !important;
 }
 
-.gantt-task-state-resolved .gantt_task_line {
-  background-color: #f3f2f1;
-  border: 1px solid #773b93;
+/* Scale Header */
+.wx-gantt .wx-scale {
+  background: #faf9f8 !important;
 }
 
-.gantt-task-state-closed .gantt_task_line {
-  background-color: #dff6dd;
-  border: 1px solid #107c10;
+.wx-gantt .wx-scale-cell {
+  font-weight: 500 !important;
+  color: #605e5c !important;
+  font-size: 12px !important;
+  border-right: 1px solid var(--gantt-grid-border) !important;
 }
 
-.gantt-today-marker {
-  background-color: #d13438;
-  color: white;
+/* Grid Rows */
+.wx-gantt .wx-grid-row {
+  border-bottom: 1px solid #f3f2f1 !important;
+  transition: background-color 0.15s ease;
+}
+
+.wx-gantt .wx-grid-row:hover {
+  background-color: var(--gantt-row-hover) !important;
+}
+
+.wx-gantt .wx-grid-row:nth-child(odd) {
+  background-color: #faf9f8 !important;
+}
+
+.wx-gantt .wx-grid-row:nth-child(odd):hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* Grid Cells */
+.wx-gantt .wx-grid-cell {
+  font-size: 13px !important;
+  color: #323130 !important;
+  padding: 0 8px !important;
+}
+
+/* ============================================
+   Task Bar Styling by Work Item Type
+   ============================================ */
+
+/* Base task bar */
+.wx-gantt .wx-task {
+  border-radius: 4px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+}
+
+.wx-gantt .wx-task-progress {
+  border-radius: 4px !important;
+  opacity: 0.4;
+}
+
+/* Epic tasks - Purple */
+.wx-gantt .wx-task.gantt-task-epic {
+  background: linear-gradient(135deg, #773b93 0%, #5c2d72 100%) !important;
+}
+
+/* Feature tasks - Cyan */
+.wx-gantt .wx-task.gantt-task-feature {
+  background: linear-gradient(135deg, #009ccc 0%, #0078a3 100%) !important;
+}
+
+/* Issue tasks - Green */
+.wx-gantt .wx-task.gantt-task-issue {
+  background: linear-gradient(135deg, #339947 0%, #267333 100%) !important;
+}
+
+/* User Story tasks - Blue */
+.wx-gantt .wx-task.gantt-task-user-story {
+  background: linear-gradient(135deg, #0078d4 0%, #005a9e 100%) !important;
+}
+
+/* Task tasks - Yellow */
+.wx-gantt .wx-task.gantt-task-task {
+  background: linear-gradient(135deg, #f2cb1d 0%, #d4b00f 100%) !important;
+  color: #323130 !important;
+}
+
+/* Bug tasks - Red */
+.wx-gantt .wx-task.gantt-task-bug {
+  background: linear-gradient(135deg, #cc293d 0%, #a31e30 100%) !important;
+}
+
+/* ============================================
+   Task State Styling
+   ============================================ */
+
+/* New/To Do - Slightly transparent */
+.wx-gantt .wx-task.gantt-state-new,
+.wx-gantt .wx-task.gantt-state-to-do {
+  opacity: 0.7;
+}
+
+/* Active/Doing - Highlighted border */
+.wx-gantt .wx-task.gantt-state-active,
+.wx-gantt .wx-task.gantt-state-doing {
+  box-shadow: 0 0 0 2px #ff8c00, 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Closed/Done - Faded */
+.wx-gantt .wx-task.gantt-state-closed,
+.wx-gantt .wx-task.gantt-state-done {
+  opacity: 0.5;
+  filter: saturate(0.5);
+}
+
+/* Resolved - Almost done */
+.wx-gantt .wx-task.gantt-state-resolved {
+  opacity: 0.7;
+  filter: saturate(0.7);
+}
+
+/* Summary/Project tasks */
+.wx-gantt .wx-task[data-type="summary"] {
+  background: #605e5c !important;
+  height: 8px !important;
+  border-radius: 2px !important;
+}
+
+/* ============================================
+   Dependency Links
+   ============================================ */
+
+.wx-gantt .wx-link {
+  stroke: var(--gantt-primary) !important;
+  stroke-width: 2px !important;
+  opacity: 0.6;
+}
+
+.wx-gantt .wx-link:hover {
+  stroke: #005a9e !important;
+  opacity: 1;
+}
+
+.wx-gantt .wx-link-arrow {
+  fill: var(--gantt-primary) !important;
+}
+
+.wx-gantt .wx-link:hover .wx-link-arrow {
+  fill: #005a9e !important;
+}
+
+/* ============================================
+   Selection and Interaction
+   ============================================ */
+
+.wx-gantt .wx-task.wx-selected {
+  box-shadow: 0 0 0 3px var(--gantt-primary), 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+.wx-gantt .wx-grid-row.wx-selected {
+  background-color: #deecf9 !important;
+}
+
+/* ============================================
+   Scrollbar Styling
+   ============================================ */
+
+.wx-gantt ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.wx-gantt ::-webkit-scrollbar-track {
+  background: #f3f2f1;
+}
+
+.wx-gantt ::-webkit-scrollbar-thumb {
+  background: #c8c6c4;
+  border-radius: 5px;
+}
+
+.wx-gantt ::-webkit-scrollbar-thumb:hover {
+  background: #a19f9d;
+}
+
+/* ============================================
+   Mobile Responsiveness
+   ============================================ */
+
+@media (max-width: 768px) {
+  .wx-gantt .wx-grid-header-cell,
+  .wx-gantt .wx-grid-cell {
+    font-size: 11px !important;
+    padding: 0 4px !important;
+  }
+
+  .wx-gantt .wx-task-content {
+    font-size: 10px !important;
+  }
 }

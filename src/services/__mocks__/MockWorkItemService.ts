@@ -169,7 +169,7 @@ export class MockWorkItemService {
       }
 
       // Filter by assigned to
-      if (filters.assignedTo?.length > 0) {
+      if (filters.assignedTo && filters.assignedTo.length > 0) {
         if (!item.assignedTo || !filters.assignedTo.includes(item.assignedTo.id)) {
           return false;
         }
@@ -242,6 +242,8 @@ export const MockScenarios = {
         createdDate: new Date(),
         changedDate: new Date(),
         childrenIds: [],
+        predecessors: [],
+        successors: [],
         priority: (i % 4) + 1,
         tags: [`tag${i % 5}`]
       });
@@ -256,7 +258,7 @@ export const MockScenarios = {
   deepHierarchy: (depth: number = 5): MockScenario => {
     const items: WorkItem[] = [];
     const types: WorkItemType[] = ['Epic', 'Feature', 'User Story', 'Task', 'Task'];
-    
+
     for (let i = 1; i <= depth; i++) {
       items.push({
         id: i,
@@ -276,11 +278,13 @@ export const MockScenarios = {
         changedDate: new Date(),
         parentId: i > 1 ? i - 1 : undefined,
         childrenIds: i < depth ? [i + 1] : [],
+        predecessors: [],
+        successors: [],
         priority: 1,
         tags: ['hierarchy']
       });
     }
-    
+
     return {
       name: 'deepHierarchy',
       workItems: items,
@@ -308,8 +312,6 @@ export const mockWorkItemService = new MockWorkItemService();
 
 // Helper function to generate realistic work items
 function generateRealisticWorkItems(): WorkItem[] {
-  const baseDate = new Date('2026-01-01');
-  
   return [
     {
       id: 1,
@@ -324,6 +326,8 @@ function generateRealisticWorkItems(): WorkItem[] {
       createdDate: new Date('2025-12-15'),
       changedDate: new Date('2026-01-10'),
       childrenIds: [2, 3],
+      predecessors: [],
+      successors: [],
       priority: 1,
       tags: ['roadmap', 'q1-2026']
     },
@@ -341,6 +345,8 @@ function generateRealisticWorkItems(): WorkItem[] {
       changedDate: new Date('2026-01-08'),
       parentId: 1,
       childrenIds: [4],
+      predecessors: [],
+      successors: [3],  // Dashboard Analytics depends on Auth
       priority: 1,
       tags: ['security', 'auth']
     },
@@ -358,6 +364,8 @@ function generateRealisticWorkItems(): WorkItem[] {
       changedDate: new Date('2025-12-22'),
       parentId: 1,
       childrenIds: [],
+      predecessors: [2],  // Depends on Auth System
+      successors: [],
       priority: 2,
       tags: ['analytics']
     },
@@ -375,6 +383,8 @@ function generateRealisticWorkItems(): WorkItem[] {
       changedDate: new Date('2026-01-08'),
       parentId: 2,
       childrenIds: [],
+      predecessors: [],
+      successors: [5],  // Bug fix depends on OAuth
       remainingWork: 8,
       completedWork: 12,
       priority: 1,
@@ -393,6 +403,8 @@ function generateRealisticWorkItems(): WorkItem[] {
       createdDate: new Date('2026-01-07'),
       changedDate: new Date('2026-01-08'),
       childrenIds: [],
+      predecessors: [4],  // Depends on OAuth being done
+      successors: [],
       remainingWork: 4,
       completedWork: 2,
       priority: 1,
@@ -415,6 +427,8 @@ function generateEdgeCaseWorkItems(): WorkItem[] {
       createdDate: new Date('2026-01-15'),
       changedDate: new Date('2026-01-15'),
       childrenIds: [],
+      predecessors: [],
+      successors: [],
       tags: ['null-dates']
     },
     {
@@ -429,6 +443,8 @@ function generateEdgeCaseWorkItems(): WorkItem[] {
       createdDate: new Date('2026-01-15'),
       changedDate: new Date('2026-01-18'),
       childrenIds: [],
+      predecessors: [],
+      successors: [],
       tags: ['start-only']
     },
     {
@@ -443,6 +459,8 @@ function generateEdgeCaseWorkItems(): WorkItem[] {
       createdDate: new Date('2026-01-15'),
       changedDate: new Date('2026-01-18'),
       childrenIds: [],
+      predecessors: [],
+      successors: [],
       tags: ['target-only']
     },
     {
@@ -458,6 +476,8 @@ function generateEdgeCaseWorkItems(): WorkItem[] {
       createdDate: new Date('2026-01-15'),
       changedDate: new Date('2026-01-18'),
       childrenIds: [],
+      predecessors: [],
+      successors: [],
       tags: ['zero-duration']
     },
     {
@@ -474,6 +494,8 @@ function generateEdgeCaseWorkItems(): WorkItem[] {
       changedDate: new Date('2026-01-18'),
       parentId: 99999,
       childrenIds: [],
+      predecessors: [],
+      successors: [],
       tags: ['missing-parent']
     }
   ];

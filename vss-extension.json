@@ -1,11 +1,11 @@
 {
   "manifestVersion": 1,
   "id": "gantt-chart-extension",
-  "version": "1.0.0",
+  "version": "1.0.20",
   "name": "Gantt Chart for Azure Boards",
-  "publisher": "your-publisher",
+  "publisher": "MartinBlasko",
   "description": "Visualize work items in an interactive Gantt chart view. Supports hierarchy, dependencies, and real-time updates.",
-  "public": false,
+  "public": true,
   "galleryFlags": ["Preview"],
   "categories": ["Azure Boards"],
   "tags": ["gantt", "chart", "timeline", "planning", "schedule", "roadmap", "work-items"],
@@ -28,24 +28,24 @@
   },
   "links": {
     "getstarted": {
-      "uri": "https://github.com/your-org/ado-gantt-extension#get-started"
+      "uri": "https://github.com/MartinBspheroid/ado-gantt#get-started"
     },
     "learn": {
-      "uri": "https://github.com/your-org/ado-gantt-extension/wiki"
+      "uri": "https://github.com/MartinBspheroid/ado-gantt/wiki"
     },
     "support": {
-      "uri": "https://github.com/your-org/ado-gantt-extension/issues"
+      "uri": "https://github.com/MartinBspheroid/ado-gantt/issues"
     },
     "repository": {
-      "uri": "https://github.com/your-org/ado-gantt-extension"
+      "uri": "https://github.com/MartinBspheroid/ado-gantt"
     },
     "issues": {
-      "uri": "https://github.com/your-org/ado-gantt-extension/issues"
+      "uri": "https://github.com/MartinBspheroid/ado-gantt/issues"
     }
   },
   "repository": {
     "type": "git",
-    "uri": "https://github.com/your-org/ado-gantt-extension"
+    "uri": "https://github.com/MartinBspheroid/ado-gantt"
   },
   "branding": {
     "color": "rgb(0, 120, 212)",

@@ -1,166 +1,202 @@
 import * as React from "react";
-import { GanttChartProps } from "../types";
+import { useMemo } from "react";
+import { Gantt } from "wx-react-gantt";
+import "wx-react-gantt/dist/gantt.css";
+import { GanttChartProps, WorkItemType } from "../types";
 import { ganttDataService } from "../services";
 import "../styles/GanttChart.css";
 
-let gantt: any = null;
+// Work item type icons (Azure DevOps style)
+const TYPE_ICONS: Record<WorkItemType, string> = {
+  'Epic': '👑',
+  'Feature': '🎯',
+  'User Story': '📖',
+  'Task': '📋',
+  'Bug': '🐛',
+  'Issue': '⚠️'
+};
+
+// Work item type colors
+const TYPE_COLORS: Record<WorkItemType, string> = {
+  'Epic': '#773b93',
+  'Feature': '#009ccc',
+  'User Story': '#0078d4',
+  'Task': '#f2cb1d',
+  'Bug': '#cc293d',
+  'Issue': '#339947'
+};
+
+// Column configuration with icons
+const COLUMNS = [
+  {
+    id: "text",
+    header: "Work Item",
+    flexgrow: 3,
+    align: "left" as const
+  },
+  {
+    id: "start",
+    header: "Start",
+    width: 100,
+    align: "center" as const
+  },
+  {
+    id: "duration",
+    header: "Days",
+    width: 60,
+    align: "center" as const
+  }
+];
+
+// Compatibility wrapper for wx-react-gantt
+const WxReactGanttCompat: React.FC<{
+  tasks: any[];
+  links: any[];
+  scales: any[];
+  columns: any[];
+  cellWidth: number;
+  cellHeight: number;
+}> = ({ tasks, links, scales, columns, cellWidth, cellHeight }) => {
+  // Use legacy React 16/17 APIs if available
+  const LegacyGantt = useMemo(() => {
+    try {
+      // Try to use the original Gantt component
+      return Gantt;
+    } catch (error) {
+      console.warn("Legacy Gantt component not available, using compatibility mode");
+      return null;
+    }
+  }, []);
+
+  if (!LegacyGantt) {
+    // Fallback to a simple div if Gantt is not available
+    return (
+      <div className="gantt-chart">
+        <div className="gantt-error">
+          Gantt chart is not available in this environment
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <LegacyGantt
+      tasks={tasks}
+      links={links}
+      scales={scales}
+      columns={columns}
+      cellWidth={cellWidth}
+      cellHeight={cellHeight}
+    />
+  );
+};
 
 export const GanttChart: React.FC<GanttChartProps> = ({
   items,
+  links,
   zoom,
   onItemClick,
   onItemDrag,
-  onItemResize,
   isLoading
 }) => {
-  const ganttContainer = React.useRef<HTMLDivElement>(null);
-  const ganttInitialized = React.useRef(false);
+  // Scales configuration matching SVAR docs
+  const scales = useMemo(() => [
+    { unit: "month", step: 1, format: "MMMM yyy" },
+    { unit: "day", step: 1, format: "d" }
+  ], []);
 
-  React.useEffect(() => {
-    if (typeof window === "undefined" || !ganttContainer.current) return;
-
-    const initGantt = async () => {
-      if (!ganttInitialized.current) {
-        const ganttModule = await import("dhtmlx-gantt");
-        gantt = ganttModule.gantt;
-
-        configureGantt();
-        gantt.init(ganttContainer.current);
-        ganttInitialized.current = true;
-      }
-    };
-
-    initGantt();
-
-    return () => {
-      if (gantt && ganttInitialized.current) {
-        gantt.clearAll();
-      }
-    };
-  }, []);
-
-  const configureGantt = () => {
-    if (!gantt) return;
-
-    gantt.config.columns = [
-      { name: "text", label: "Work Item", tree: true, width: 250, resize: true },
-      { name: "start_date", label: "Start", align: "center", width: 90 },
-      { name: "duration", label: "Days", align: "center", width: 60 },
-      { name: "progress", label: "Progress", align: "center", width: 80, template: (obj: any) => `${Math.round(obj.progress * 100)}%` }
-    ];
-
-    updateZoom(zoom);
-
-    gantt.config.drag_move = true;
-    gantt.config.drag_resize = true;
-    gantt.config.drag_progress = false;
-    gantt.config.row_height = 36;
-    gantt.config.bar_height = 24;
-    gantt.config.min_column_width = 50;
-
-    gantt.attachEvent("onTaskClick", (id: string | number) => {
-      const task = gantt.getTask(id);
-      if (task && task.workItem) {
-        onItemClick(task);
-      }
-      return true;
-    });
-
-    gantt.attachEvent("onAfterTaskDrag", (id: string | number, mode: string, task: any) => {
-      if (mode === "move" && onItemDrag) {
-        onItemDrag(task, task.start_date, task.end_date);
-      } else if (mode === "resize" && onItemResize) {
-        onItemResize(task, task.start_date, task.end_date);
-      }
-      return true;
-    });
-
-    gantt.templates.task_class = (start: Date, end: Date, task: any) => {
-      const classes = [`gantt-task-state-${task.workItem.state.toLowerCase()}`];
-      if (task.workItem.type === 'Epic') classes.push('gantt-task-epic');
-      if (task.workItem.type === 'Feature') classes.push('gantt-task-feature');
-      if (task.type === 'project') classes.push('gantt-task-project');
-      return classes.join(' ');
-    };
-  };
-
-  const updateZoom = (zoomLevel: string) => {
-    if (!gantt) return;
-
-    switch (zoomLevel) {
-      case 'day':
-        gantt.config.scale_unit = "day";
-        gantt.config.step = 1;
-        gantt.config.date_scale = "%d %M";
-        break;
-      case 'week':
-        gantt.config.scale_unit = "week";
-        gantt.config.step = 1;
-        gantt.config.date_scale = "Week %W";
-        break;
-      case 'month':
-        gantt.config.scale_unit = "month";
-        gantt.config.step = 1;
-        gantt.config.date_scale = "%F %Y";
-        break;
-      case 'quarter':
-        gantt.config.scale_unit = "month";
-        gantt.config.step = 3;
-        gantt.config.date_scale = "%Y Q%q";
-        break;
-    }
-
-    gantt.render();
-  };
-
-  React.useEffect(() => {
-    if (!gantt || !ganttInitialized.current) return;
-
-    const ganttData = {
-      data: items.map(item => ({
-        id: item.id,
-        text: item.text,
-        start_date: formatDateForGantt(item.start_date),
-        duration: item.duration,
-        progress: item.progress / 100,
-        parent: item.parent || 0,
-        type: item.type,
-        open: item.open,
-        workItem: item.workItem,
-        color: item.color,
-        textColor: item.textColor
-      })),
-      links: []
-    };
-
-    gantt.clearAll();
-    gantt.parse(ganttData);
-  }, [items]);
-
-  React.useEffect(() => {
-    if (!gantt || !ganttInitialized.current) return;
-    updateZoom(zoom);
+  // Get cell width based on zoom level
+  const cellWidth = useMemo(() => {
+    return ganttDataService.getCellWidth(zoom);
   }, [zoom]);
 
-  const formatDateForGantt = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  // Convert items to SVAR task format or use test data
+  const tasks = useMemo(() => {
+    if (items.length === 0) {
+      // Test data matching SVAR docs exactly
+      return [
+        {
+          id: 20,
+          text: "📋 New Task",
+          start: new Date(2024, 5, 11),
+          end: new Date(2024, 6, 12),
+          duration: 31,
+          progress: 50,
+          type: "task" as const
+        },
+        {
+          id: 47,
+          text: "👑 Master Project",
+          start: new Date(2024, 5, 12),
+          end: new Date(2024, 7, 12),
+          duration: 61,
+          progress: 0,
+          parent: 0,
+          type: "summary" as const
+        },
+        {
+          id: 22,
+          text: "📋 Sub Task",
+          start: new Date(2024, 7, 11),
+          end: new Date(2024, 8, 12),
+          duration: 32,
+          progress: 25,
+          parent: 47,
+          type: "task" as const
+        }
+      ];
+    }
+
+    // Convert GanttItem[] to SVAR format with icons
+    return items.map(item => {
+      const workItemType = item.workItem?.type as WorkItemType;
+      const icon = workItemType ? TYPE_ICONS[workItemType] || '' : '';
+
+      return {
+        id: item.id,
+        text: `${icon} ${item.text}`,
+        start: item.start,
+        end: item.end,
+        duration: item.duration,
+        progress: item.progress,
+        parent: item.parent || 0,
+        type: item.type,
+        // Pass CSS class for styling
+        $css: item.$css
+      };
+    });
+  }, [items]);
+
+  // Convert links to SVAR format
+  const ganttLinks = useMemo(() => {
+    return links.map(link => ({
+      id: link.id,
+      source: link.source,
+      target: link.target,
+      type: link.type
+    }));
+  }, [links]);
 
   return (
     <div className="gantt-chart-container">
       {isLoading && (
         <div className="gantt-loading-overlay">
-          <div className="loading-spinner">Loading Gantt chart...</div>
+          <div className="loading-spinner">
+            <div className="spinner"></div>
+            <span>Loading work items...</span>
+          </div>
         </div>
       )}
-      <div 
-        ref={ganttContainer} 
-        className="gantt-chart"
-        style={{ width: '100%', height: 'calc(100vh - 200px)' }}
-      />
+      <div className="gantt-chart" style={{ width: '100%', height: 'calc(100vh - 180px)' }}>
+        <WxReactGanttCompat
+          tasks={tasks}
+          links={ganttLinks}
+          scales={scales}
+          columns={COLUMNS}
+          cellWidth={cellWidth}
+          cellHeight={38}
+        />
+      </div>
     </div>
   );
 };

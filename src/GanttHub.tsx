@@ -1,11 +1,12 @@
 import * as React from "react";
 import { useEffect, useState, useCallback } from "react";
 import * as SDK from "azure-devops-extension-sdk";
-import { 
-  WorkItem, 
-  GanttItem, 
-  GanttFilters, 
-  ZoomLevel 
+import {
+  WorkItem,
+  GanttItem,
+  GanttLink,
+  GanttFilters,
+  ZoomLevel
 } from "./types";
 import { workItemService, ganttDataService } from "./services";
 import { GanttToolbar, GanttChart, WorkItemDetailsPanel } from "./components";
@@ -14,6 +15,7 @@ import "./styles/GanttHub.css";
 export const GanttHub: React.FC = () => {
   const [workItems, setWorkItems] = useState<WorkItem[]>([]);
   const [ganttItems, setGanttItems] = useState<GanttItem[]>([]);
+  const [ganttLinks, setGanttLinks] = useState<GanttLink[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
@@ -21,8 +23,9 @@ export const GanttHub: React.FC = () => {
   const [selectedWorkItem, setSelectedWorkItem] = useState<WorkItem | null>(null);
   
   const [filters, setFilters] = useState<GanttFilters>({
-    workItemTypes: ['User Story', 'Task', 'Feature'],
-    states: ['New', 'Active', 'Resolved'],
+    // Support both Agile and Basic process templates
+    workItemTypes: ['Epic', 'Feature', 'User Story', 'Task', 'Bug', 'Issue'],
+    states: ['New', 'Active', 'Resolved', 'To Do', 'Doing', 'Done'],
     showTeamMembersOnly: false,
     teamMemberWhitelist: []
   });
@@ -33,20 +36,31 @@ export const GanttHub: React.FC = () => {
   const [availableIterations, setAvailableIterations] = useState<string[]>([]);
   const [availableTeamMembers, setAvailableTeamMembers] = useState<{ id: string; displayName: string }[]>([]);
 
+  const [initialized, setInitialized] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<string>("Starting...");
+
   useEffect(() => {
     const init = async () => {
       try {
+        setDebugInfo("SDK.init()...");
         await SDK.init();
+        setDebugInfo("SDK.ready()...");
         await SDK.ready();
-        
+        setDebugInfo("SDK ready, getting user...");
+
         const currentUser = SDK.getUser();
         setUser(currentUser);
-        
+        setDebugInfo(`User: ${currentUser?.displayName || 'unknown'}`);
+
+        setDebugInfo("Initializing workItemService...");
         await workItemService.initialize();
-        await loadWorkItems();
-      } catch (err: any) {
-        console.error("Error initializing extension:", err);
-        setError("Failed to initialize extension. Please refresh the page.");
+        setDebugInfo("Service initialized, ready to load");
+        setInitialized(true);
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        setDebugInfo(`Init error: ${errMsg}`);
+        setError(`Failed to initialize: ${errMsg}`);
+        setIsLoading(false);
       }
     };
 
@@ -54,28 +68,35 @@ export const GanttHub: React.FC = () => {
   }, []);
 
   const loadWorkItems = useCallback(async () => {
+    setDebugInfo("Loading work items...");
     setIsLoading(true);
     setError(null);
 
     try {
+      setDebugInfo("Querying work items...");
       const items = await workItemService.queryWorkItems(filters);
+      setDebugInfo(`Got ${items.length} work items`);
       setWorkItems(items);
-      
-      const ganttData = ganttDataService.convertToGanttItems(items);
-      setGanttItems(ganttData);
-    } catch (err: any) {
-      console.error("Error loading work items:", err);
-      setError("Failed to load work items. Please check your permissions and try again.");
+
+      const ganttData = ganttDataService.convertToGanttData(items);
+      setDebugInfo(`Converted to ${ganttData.items.length} Gantt items, ${ganttData.links.length} links`);
+      setGanttItems(ganttData.items);
+      setGanttLinks(ganttData.links);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      setDebugInfo(`Load error: ${errMsg}`);
+      setError(`Failed to load: ${errMsg}`);
     } finally {
       setIsLoading(false);
     }
   }, [filters]);
 
   useEffect(() => {
-    if (user) {
+    if (initialized) {
+      console.log("[GanttHub] Initialized, loading work items...");
       loadWorkItems();
     }
-  }, [filters, user, loadWorkItems]);
+  }, [filters, initialized, loadWorkItems]);
 
   const handleItemClick = useCallback((item: GanttItem) => {
     setSelectedWorkItem(item.workItem);
@@ -120,8 +141,13 @@ export const GanttHub: React.FC = () => {
   return (
     <div className="gantt-hub-page">
       <div className="gantt-hub-header">
-        <h1>Gantt Chart</h1>
-        <p>Visualize work items in a timeline view</p>
+        <div className="gantt-hub-title">
+          <h1>Gantt Chart</h1>
+          <span className="gantt-hub-subtitle">Timeline view of work items</span>
+        </div>
+        <div className="gantt-hub-stats">
+          <span className="stat-item">{ganttItems.length} items</span>
+        </div>
       </div>
 
       {error && (
@@ -145,6 +171,7 @@ export const GanttHub: React.FC = () => {
       <div className="gantt-hub-content">
         <GanttChart
           items={ganttItems}
+          links={ganttLinks}
           zoom={zoom}
           onItemClick={handleItemClick}
           onItemDrag={handleItemDrag}

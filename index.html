@@ -4,9 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gantt Chart - Azure Boards</title>
-  
-  <link rel="stylesheet" href="style.css" />
-  
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/azure-devops-ui@2.167.0/core.css"
+  />
+
   <style>
     html, body, #root {
       margin: 0;
@@ -16,7 +19,7 @@
       overflow: hidden;
       font-family: "Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
     }
-    
+
     * {
       box-sizing: border-box;
     }
@@ -24,8 +27,6 @@
 </head>
 <body>
   <div id="root"></div>
-
-  <!-- Extension bundle (UMD with React 19 and Azure DevOps SDK) -->
-  <script src="gantt.js"></script>
+  <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>

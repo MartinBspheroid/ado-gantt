@@ -1,11 +1,12 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as ReactDOM from "react-dom/client";
 import { GanttHub } from "./GanttHub";
 
 const container = document.getElementById("root");
 
 if (container) {
-  ReactDOM.render(<GanttHub />, container);
+  const root = ReactDOM.createRoot(container);
+  root.render(<GanttHub />);
 } else {
   console.error("Failed to find root element");
 }

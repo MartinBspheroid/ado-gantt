@@ -1,11 +1,11 @@
-export type WorkItemState = 'New' | 'Active' | 'Resolved' | 'Closed' | 'Removed';
+export type WorkItemState = 'New' | 'Active' | 'Resolved' | 'Closed' | 'Removed' | 'To Do' | 'Doing' | 'Done';
 export interface StateColor {
     state: WorkItemState;
     color: string;
     backgroundColor: string;
 }
 export declare const STATE_COLORS: Record<WorkItemState, StateColor>;
-export type WorkItemType = 'Epic' | 'Feature' | 'User Story' | 'Task' | 'Bug';
+export type WorkItemType = 'Epic' | 'Feature' | 'User Story' | 'Task' | 'Bug' | 'Issue';
 export interface WorkItem {
     id: number;
     title: string;
@@ -25,6 +25,8 @@ export interface WorkItem {
     changedDate: Date;
     parentId?: number;
     childrenIds: number[];
+    predecessors: number[];
+    successors: number[];
     remainingWork?: number;
     completedWork?: number;
     priority?: number;
@@ -34,16 +36,26 @@ export interface WorkItem {
 export interface GanttItem {
     id: number;
     text: string;
-    start_date: Date;
-    end_date: Date;
+    start: Date;
+    end: Date;
     duration?: number;
     progress: number;
     parent: number;
-    type: 'task' | 'project';
+    type: 'task' | 'summary';
     open: boolean;
     workItem: WorkItem;
-    color: string;
-    textColor: string;
+    $css?: string;
+}
+export type GanttLinkType = 'e2s' | 's2s' | 'e2e' | 's2e';
+export interface GanttLink {
+    id: string | number;
+    source: number;
+    target: number;
+    type: GanttLinkType;
+}
+export interface GanttData {
+    items: GanttItem[];
+    links: GanttLink[];
 }
 export interface GanttFilters {
     areaPath?: string;
@@ -136,6 +148,7 @@ export interface GanttToolbarProps {
 }
 export interface GanttChartProps {
     items: GanttItem[];
+    links: GanttLink[];
     zoom: ZoomLevel;
     onItemClick: (item: GanttItem) => void;
     onItemDrag?: (item: GanttItem, newStart: Date, newEnd: Date) => void;

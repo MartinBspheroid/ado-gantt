@@ -81,6 +81,8 @@ export class MockGanttDataService extends GanttDataService {
         createdDate: new Date(),
         changedDate: new Date(),
         childrenIds: [],
+        predecessors: [],
+        successors: [],
         priority: 1,
         tags: ['sequential']
       });
@@ -114,6 +116,8 @@ export class MockGanttDataService extends GanttDataService {
         createdDate: new Date(),
         changedDate: new Date(),
         childrenIds: [],
+        predecessors: [],
+        successors: [],
         priority: 1,
         tags: ['parallel']
       });
@@ -151,6 +155,8 @@ export class MockGanttDataService extends GanttDataService {
         createdDate: new Date(),
         changedDate: new Date(),
         childrenIds: [],
+        predecessors: [],
+        successors: [],
         priority: 1,
         tags: ['overlapping']
       });
@@ -189,13 +195,13 @@ export class MockGanttDataService extends GanttDataService {
       // Check required fields
       if (!item.id) errors.push(`Item missing id`);
       if (!item.text) errors.push(`Item ${item.id} missing text`);
-      if (!item.start_date) errors.push(`Item ${item.id} missing start_date`);
-      if (!item.end_date) errors.push(`Item ${item.id} missing end_date`);
+      if (!item.start) errors.push(`Item ${item.id} missing start`);
+      if (!item.end) errors.push(`Item ${item.id} missing end`);
 
       // Check date validity
-      if (item.start_date && item.end_date) {
-        if (item.end_date < item.start_date) {
-          errors.push(`Item ${item.id} has end_date before start_date`);
+      if (item.start && item.end) {
+        if (item.end < item.start) {
+          errors.push(`Item ${item.id} has end before start`);
         }
       }
 
@@ -232,7 +238,7 @@ export class MockGanttDataService extends GanttDataService {
   calculateStatistics(items: GanttItem[]): {
     totalItems: number;
     tasks: number;
-    projects: number;
+    summaries: number;
     averageDuration: number;
     averageProgress: number;
     dateRange: { start: Date; end: Date } | null;
@@ -241,7 +247,7 @@ export class MockGanttDataService extends GanttDataService {
       return {
         totalItems: 0,
         tasks: 0,
-        projects: 0,
+        summaries: 0,
         averageDuration: 0,
         averageProgress: 0,
         dateRange: null
@@ -249,18 +255,18 @@ export class MockGanttDataService extends GanttDataService {
     }
 
     const tasks = items.filter(i => i.type === 'task').length;
-    const projects = items.filter(i => i.type === 'project').length;
-    
+    const summaries = items.filter(i => i.type === 'summary').length;
+
     const totalDuration = items.reduce((sum, i) => sum + (i.duration || 0), 0);
     const totalProgress = items.reduce((sum, i) => sum + i.progress, 0);
 
-    const dates = items.flatMap(i => [i.start_date, i.end_date]);
+    const dates = items.flatMap(i => [i.start, i.end]);
     const startDates = dates.filter(d => d).map(d => d.getTime());
     
     return {
       totalItems: items.length,
       tasks,
-      projects,
+      summaries,
       averageDuration: Math.round(totalDuration / items.length),
       averageProgress: Math.round(totalProgress / items.length),
       dateRange: startDates.length > 0 ? {

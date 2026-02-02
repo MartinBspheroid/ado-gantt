@@ -2,19 +2,26 @@ import * as React from "react";
 import { GanttToolbarProps, ZoomLevel, WorkItemType, WorkItemState } from "../types";
 import "../styles/GanttToolbar.css";
 
+// Support both Agile and Basic process templates
 const WORK_ITEM_TYPES: { id: WorkItemType; text: string }[] = [
   { id: 'Epic', text: 'Epic' },
   { id: 'Feature', text: 'Feature' },
   { id: 'User Story', text: 'User Story' },
   { id: 'Task', text: 'Task' },
-  { id: 'Bug', text: 'Bug' }
+  { id: 'Bug', text: 'Bug' },
+  { id: 'Issue', text: 'Issue' }
 ];
 
 const STATES: { id: WorkItemState; text: string }[] = [
+  // Agile states
   { id: 'New', text: 'New' },
   { id: 'Active', text: 'Active' },
   { id: 'Resolved', text: 'Resolved' },
-  { id: 'Closed', text: 'Closed' }
+  { id: 'Closed', text: 'Closed' },
+  // Basic states
+  { id: 'To Do', text: 'To Do' },
+  { id: 'Doing', text: 'Doing' },
+  { id: 'Done', text: 'Done' }
 ];
 
 const ZOOM_LEVELS: { id: ZoomLevel; text: string }[] = [
