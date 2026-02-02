@@ -80,7 +80,14 @@ export const GanttChart: React.FC<GanttChartProps> = ({
       if (task.workItem.type === 'Epic') classes.push('gantt-task-epic');
       if (task.workItem.type === 'Feature') classes.push('gantt-task-feature');
       if (task.type === 'project') classes.push('gantt-task-project');
+      if (task.progressStatus) classes.push(`gantt-task-status-${task.progressStatus.toLowerCase().replace(' ', '-')}`);
       return classes.join(' ');
+    };
+    
+    // Add progress status indicator to task text
+    gantt.templates.task_text = (start: Date, end: Date, task: any) => {
+      const statusIcon = getStatusIcon(task.progressStatus || 'Not Started');
+      return `<span class="gantt-task-status-icon">${statusIcon}</span> ${task.text}`;
     };
   };
 
@@ -149,17 +156,39 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     return `${year}-${month}-${day}`;
   };
 
+  const getStatusIcon = (status: string): string => {
+    switch (status) {
+      case 'Done': return '✓';
+      case 'On Track': return '●';
+      case 'At Risk': return '⚠';
+      case 'Off Track': return '✕';
+      case 'Not Started': return '○';
+      default: return '';
+    }
+  };
+
   return (
-    <div className="gantt-chart-container">
+    <div 
+      className="gantt-chart-container"
+      role="region"
+      aria-label="Gantt chart timeline"
+      aria-busy={isLoading}
+    >
       {isLoading && (
-        <div className="gantt-loading-overlay">
-          <div className="loading-spinner">Loading Gantt chart...</div>
+        <div className="gantt-loading-overlay" role="status" aria-live="polite">
+          <div className="loading-spinner" aria-label="Loading Gantt chart">
+            <span className="spinner-icon" aria-hidden="true">⟳</span>
+            <span>Loading Gantt chart...</span>
+          </div>
         </div>
       )}
       <div 
         ref={ganttContainer} 
         className="gantt-chart"
         style={{ width: '100%', height: 'calc(100vh - 200px)' }}
+        role="application"
+        aria-label="Interactive Gantt chart. Use arrow keys to navigate between tasks."
+        tabIndex={0}
       />
     </div>
   );

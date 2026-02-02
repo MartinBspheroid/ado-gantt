@@ -15,6 +15,55 @@ export const STATE_COLORS: Record<WorkItemState, StateColor> = {
   'Removed': { state: 'Removed', color: '#a80000', backgroundColor: '#fde7e9' }
 };
 
+// Timeline-based progress status
+export type ProgressStatus = 'Not Started' | 'On Track' | 'At Risk' | 'Off Track' | 'Done';
+
+export interface ProgressStatusInfo {
+  status: ProgressStatus;
+  label: string;
+  color: string;
+  backgroundColor: string;
+  icon: string;
+}
+
+export const PROGRESS_STATUS: Record<ProgressStatus, ProgressStatusInfo> = {
+  'Not Started': { 
+    status: 'Not Started', 
+    label: 'Not Started', 
+    color: '#0078d4', 
+    backgroundColor: '#deecf9',
+    icon: '⏸️'
+  },
+  'On Track': { 
+    status: 'On Track', 
+    label: 'On Track', 
+    color: '#107c10', 
+    backgroundColor: '#dff6dd',
+    icon: '✅'
+  },
+  'At Risk': { 
+    status: 'At Risk', 
+    label: 'At Risk', 
+    color: '#ff8c00', 
+    backgroundColor: '#fff4e5',
+    icon: '⚠️'
+  },
+  'Off Track': { 
+    status: 'Off Track', 
+    label: 'Off Track', 
+    color: '#a80000', 
+    backgroundColor: '#fde7e9',
+    icon: '❌'
+  },
+  'Done': { 
+    status: 'Done', 
+    label: 'Done', 
+    color: '#107c10', 
+    backgroundColor: '#107c10',
+    icon: '✓'
+  }
+};
+
 // Work item types
 export type WorkItemType = 'Epic' | 'Feature' | 'User Story' | 'Task' | 'Bug';
 
@@ -58,22 +107,38 @@ export interface GanttItem {
   workItem: WorkItem;
   color: string;
   textColor: string;
+  progressStatus: ProgressStatus;
+}
+
+// Progress summary for header display
+export interface ProgressSummary {
+  notStarted: number;
+  onTrack: number;
+  atRisk: number;
+  offTrack: number;
+  done: number;
+  total: number;
 }
 
 // Filter configuration
 export interface GanttFilters {
   areaPath?: string;
   iterationPath?: string;
+  iterationShift?: number; // @CurrentIteration +/- n support
   assignedTo?: string[];
   workItemTypes: WorkItemType[];
   states: WorkItemState[];
   startDateRange?: { start: Date; end: Date };
   showTeamMembersOnly: boolean;
   teamMemberWhitelist: string[];
+  groupBy?: GroupByOption;
 }
 
 // Zoom level for Gantt view
 export type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
+
+// Group by options for Gantt view
+export type GroupByOption = 'none' | 'assignedTo' | 'type' | 'state' | 'iteration';
 
 // Extension configuration
 export interface GanttExtensionConfig {
@@ -143,6 +208,17 @@ export interface GanttToolbarProps {
   availableAreaPaths: string[];
   availableIterations: string[];
   availableTeamMembers: { id: string; displayName: string }[];
+  // Progress summary
+  progressSummary?: ProgressSummary;
+  // Saved boards
+  savedBoards?: { id: string; name: string }[];
+  currentBoardId?: string | null;
+  onBoardSelect?: (boardId: string) => void;
+  onSaveBoard?: (name: string) => void;
+  onDeleteBoard?: (boardId: string) => void;
+  // Group by
+  groupBy?: GroupByOption;
+  onGroupByChange?: (groupBy: GroupByOption) => void;
 }
 
 export interface GanttChartProps {
@@ -158,4 +234,13 @@ export interface WorkItemDetailsPanelProps {
   workItem: WorkItem | null;
   onClose: () => void;
   onSave: (workItem: WorkItem) => Promise<void>;
+}
+
+// Error handling types
+export interface ErrorDetails {
+  type: 'permission' | 'network' | 'query' | 'unknown';
+  message: string;
+  userAction?: string;
+  helpLink?: string;
+  technicalDetails?: string;
 }

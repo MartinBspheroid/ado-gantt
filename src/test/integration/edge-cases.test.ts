@@ -119,7 +119,7 @@ describe('Edge Cases', () => {
     });
 
     it('should handle undefined childrenIds', () => {
-      const item = {
+      const item: WorkItem = {
         id: 1,
         title: 'No Children',
         type: 'Task',
@@ -130,10 +130,10 @@ describe('Edge Cases', () => {
         targetDate: new Date(),
         createdDate: new Date(),
         changedDate: new Date(),
-        // childrenIds is undefined
+        childrenIds: [],
         priority: 1,
         tags: []
-      } as WorkItem;
+      };
 
       const result = service.convertToGanttItems([item]);
       
@@ -367,7 +367,8 @@ describe('Edge Cases', () => {
           open: true,
           workItem: {} as WorkItem,
           color: '',
-          textColor: ''
+          textColor: '',
+          progressStatus: 'Not Started'
         },
         {
           id: 1, // Duplicate
@@ -380,7 +381,8 @@ describe('Edge Cases', () => {
           open: true,
           workItem: {} as WorkItem,
           color: '',
-          textColor: ''
+          textColor: '',
+          progressStatus: 'Not Started'
         }
       ];
 
@@ -403,7 +405,8 @@ describe('Edge Cases', () => {
           open: true,
           workItem: {} as WorkItem,
           color: '',
-          textColor: ''
+          textColor: '',
+          progressStatus: 'Not Started'
         }
       ];
 
@@ -426,7 +429,8 @@ describe('Edge Cases', () => {
           open: true,
           workItem: {} as WorkItem,
           color: '',
-          textColor: ''
+          textColor: '',
+          progressStatus: 'Not Started'
         }
       ];
 

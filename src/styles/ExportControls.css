@@ -1,0 +1,73 @@
+.export-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #605e5c;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.export-btn {
+  padding: 6px 12px;
+  border: 1px solid #e1dfdd;
+  background: #ffffff;
+  border-radius: 2px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 50px;
+}
+
+.export-btn:hover:not(:disabled) {
+  background: #f3f2f1;
+  border-color: #c8c6c4;
+}
+
+.export-btn:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.export-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.export-progress {
+  font-size: 12px;
+  color: #0078d4;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Dark mode styles */
+.dark-mode .export-label {
+  color: #c8c6c4;
+}
+
+.dark-mode .export-btn {
+  background: #323130;
+  border-color: #3b3a39;
+  color: #f3f2f1;
+}
+
+.dark-mode .export-btn:hover:not(:disabled) {
+  background: #3b3a39;
+  border-color: #484644;
+}
+
+.dark-mode .export-progress {
+  color: #2899f5;
+}

@@ -5,6 +5,15 @@ export interface StateColor {
     backgroundColor: string;
 }
 export declare const STATE_COLORS: Record<WorkItemState, StateColor>;
+export type ProgressStatus = 'Not Started' | 'On Track' | 'At Risk' | 'Off Track' | 'Done';
+export interface ProgressStatusInfo {
+    status: ProgressStatus;
+    label: string;
+    color: string;
+    backgroundColor: string;
+    icon: string;
+}
+export declare const PROGRESS_STATUS: Record<ProgressStatus, ProgressStatusInfo>;
 export type WorkItemType = 'Epic' | 'Feature' | 'User Story' | 'Task' | 'Bug';
 export interface WorkItem {
     id: number;
@@ -44,10 +53,20 @@ export interface GanttItem {
     workItem: WorkItem;
     color: string;
     textColor: string;
+    progressStatus: ProgressStatus;
+}
+export interface ProgressSummary {
+    notStarted: number;
+    onTrack: number;
+    atRisk: number;
+    offTrack: number;
+    done: number;
+    total: number;
 }
 export interface GanttFilters {
     areaPath?: string;
     iterationPath?: string;
+    iterationShift?: number;
     assignedTo?: string[];
     workItemTypes: WorkItemType[];
     states: WorkItemState[];
@@ -57,8 +76,10 @@ export interface GanttFilters {
     };
     showTeamMembersOnly: boolean;
     teamMemberWhitelist: string[];
+    groupBy?: GroupByOption;
 }
 export type ZoomLevel = 'day' | 'week' | 'month' | 'quarter';
+export type GroupByOption = 'none' | 'assignedTo' | 'type' | 'state' | 'iteration';
 export interface GanttExtensionConfig {
     teamMemberWhitelist: string[];
     defaultZoom: ZoomLevel;
@@ -133,6 +154,17 @@ export interface GanttToolbarProps {
         id: string;
         displayName: string;
     }[];
+    progressSummary?: ProgressSummary;
+    savedBoards?: {
+        id: string;
+        name: string;
+    }[];
+    currentBoardId?: string | null;
+    onBoardSelect?: (boardId: string) => void;
+    onSaveBoard?: (name: string) => void;
+    onDeleteBoard?: (boardId: string) => void;
+    groupBy?: GroupByOption;
+    onGroupByChange?: (groupBy: GroupByOption) => void;
 }
 export interface GanttChartProps {
     items: GanttItem[];

@@ -1,0 +1,141 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  min-height: 400px;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.empty-state-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #323130;
+  margin: 0 0 12px 0;
+}
+
+.empty-state-message {
+  font-size: 14px;
+  color: #605e5c;
+  margin: 0 0 24px 0;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.empty-state-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.empty-state-btn:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.empty-state-btn-primary {
+  background: #0078d4;
+  color: white;
+}
+
+.empty-state-btn-primary:hover {
+  background: #106ebe;
+}
+
+.empty-state-btn-primary:active {
+  background: #005a9e;
+}
+
+.empty-state-btn-secondary {
+  background: #f3f2f1;
+  color: #323130;
+}
+
+.empty-state-btn-secondary:hover {
+  background: #e1dfdd;
+}
+
+.empty-state-btn-secondary:active {
+  background: #c8c6c4;
+}
+
+.empty-state-help {
+  background: #f3f2f1;
+  border-radius: 4px;
+  padding: 16px 24px;
+  max-width: 400px;
+}
+
+.empty-state-help p {
+  font-size: 13px;
+  font-weight: 600;
+  color: #323130;
+  margin: 0 0 8px 0;
+}
+
+.empty-state-help ul {
+  margin: 0;
+  padding-left: 20px;
+  text-align: left;
+}
+
+.empty-state-help li {
+  font-size: 13px;
+  color: #605e5c;
+  margin: 4px 0;
+}
+
+/* Dark mode styles */
+.dark-mode .empty-state {
+  background: #252525;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .empty-state-title {
+  color: #f3f2f1;
+}
+
+.dark-mode .empty-state-message {
+  color: #c8c6c4;
+}
+
+.dark-mode .empty-state-btn-secondary {
+  background: #3b3a39;
+  color: #f3f2f1;
+}
+
+.dark-mode .empty-state-btn-secondary:hover {
+  background: #484644;
+}
+
+.dark-mode .empty-state-help {
+  background: #323130;
+}
+
+.dark-mode .empty-state-help p {
+  color: #f3f2f1;
+}
+
+.dark-mode .empty-state-help li {
+  color: #c8c6c4;
+}

@@ -10,6 +10,12 @@
 .gantt-chart {
   width: 100%;
   height: 100%;
+  outline: none;
+}
+
+.gantt-chart:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
 }
 
 .gantt-loading-overlay {
@@ -32,6 +38,20 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   color: var(--primary-color, #0078d4);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner-icon {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  font-size: 16px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .gantt_task_line {
@@ -62,4 +82,49 @@
 .gantt-today-marker {
   background-color: #d13438;
   color: white;
+}
+
+/* Dark mode styles */
+.dark-mode .gantt-chart-container {
+  background: #252525;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .gantt-loading-overlay {
+  background: rgba(30, 30, 30, 0.8);
+}
+
+.dark-mode .loading-spinner {
+  background: #323130;
+  color: #2899f5;
+}
+
+.dark-mode .gantt-chart:focus {
+  outline-color: #2899f5;
+}
+
+/* High contrast focus indicators */
+@media (prefers-contrast: high) {
+  .gantt-chart:focus {
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
+  }
+  
+  .filter-btn:focus,
+  .refresh-btn:focus {
+    outline: 3px solid currentColor;
+    outline-offset: 3px;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .spinner-icon {
+    animation: none;
+  }
+  
+  .filter-btn,
+  .refresh-btn {
+    transition: none;
+  }
 }

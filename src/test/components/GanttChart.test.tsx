@@ -59,7 +59,8 @@ describe('GanttChart', () => {
         tags: []
       },
       color: '#fff4e5',
-      textColor: '#ff8c00'
+      textColor: '#ff8c00',
+      progressStatus: 'On Track'
     }
   ];
 

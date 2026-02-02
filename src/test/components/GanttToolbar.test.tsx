@@ -1,8 +1,14 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { GanttToolbar } from '../../components/GanttToolbar';
+import { ThemeProvider } from '../../contexts/ThemeContext';
 import { GanttFilters, ZoomLevel } from '../../types';
+
+// Helper to wrap component with ThemeProvider
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(<ThemeProvider>{component}</ThemeProvider>);
+};
 
 describe('GanttToolbar', () => {
   const defaultFilters: GanttFilters = {
@@ -33,7 +39,7 @@ describe('GanttToolbar', () => {
 
   describe('Rendering', () => {
     it('should render toolbar with all sections', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       expect(screen.getByText('Types:')).toBeInTheDocument();
       expect(screen.getByText('States:')).toBeInTheDocument();
@@ -42,7 +48,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should render all work item type buttons', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       expect(screen.getByText('Epic')).toBeInTheDocument();
       expect(screen.getByText('Feature')).toBeInTheDocument();
@@ -52,7 +58,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should render all state buttons', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       expect(screen.getByText('New')).toBeInTheDocument();
       expect(screen.getByText('Active')).toBeInTheDocument();
@@ -61,7 +67,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should render all zoom level buttons', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       expect(screen.getByText('Day')).toBeInTheDocument();
       expect(screen.getByText('Week')).toBeInTheDocument();
@@ -70,7 +76,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should highlight active filters', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       // Check that active filters have the active class
       const featureBtn = screen.getByText('Feature');
@@ -81,7 +87,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should highlight current zoom level', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       const weekBtn = screen.getByText('Week');
       expect(weekBtn.className).toContain('active');
@@ -90,7 +96,7 @@ describe('GanttToolbar', () => {
 
   describe('Interactions - Work Item Types', () => {
     it('should toggle off a selected work item type', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       const featureBtn = screen.getByText('Feature');
       fireEvent.click(featureBtn);
@@ -103,12 +109,12 @@ describe('GanttToolbar', () => {
     });
 
     it('should toggle on an unselected work item type', () => {
-      const filtersWithoutBug = {
+      const filtersWithoutBug: GanttFilters = {
         ...defaultFilters,
         workItemTypes: ['User Story', 'Task', 'Feature']
       };
       
-      render(<GanttToolbar {...defaultProps} filters={filtersWithoutBug} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} filters={filtersWithoutBug} />);
       
       const bugBtn = screen.getByText('Bug');
       fireEvent.click(bugBtn);
@@ -123,7 +129,7 @@ describe('GanttToolbar', () => {
     it('should not allow deselecting all work item types', () => {
       // This tests UI behavior - the component might still fire the event
       // but it's up to the parent to handle validation
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       // Click all type buttons to deselect
       ['User Story', 'Task', 'Feature'].forEach(type => {
@@ -137,7 +143,7 @@ describe('GanttToolbar', () => {
 
   describe('Interactions - States', () => {
     it('should toggle off a selected state', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       const activeBtn = screen.getByText('Active');
       fireEvent.click(activeBtn);
@@ -150,12 +156,12 @@ describe('GanttToolbar', () => {
     });
 
     it('should toggle on an unselected state', () => {
-      const filtersWithoutClosed = {
+      const filtersWithoutClosed: GanttFilters = {
         ...defaultFilters,
         states: ['New', 'Active', 'Resolved']
       };
       
-      render(<GanttToolbar {...defaultProps} filters={filtersWithoutClosed} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} filters={filtersWithoutClosed} />);
       
       const closedBtn = screen.getByText('Closed');
       fireEvent.click(closedBtn);
@@ -170,7 +176,7 @@ describe('GanttToolbar', () => {
 
   describe('Interactions - Zoom', () => {
     it('should change zoom level when clicked', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       const dayBtn = screen.getByText('Day');
       fireEvent.click(dayBtn);
@@ -179,7 +185,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should call onZoomChange with correct level for each button', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       fireEvent.click(screen.getByText('Day'));
       expect(defaultProps.onZoomChange).toHaveBeenCalledWith('day');
@@ -194,7 +200,7 @@ describe('GanttToolbar', () => {
 
   describe('Interactions - Refresh', () => {
     it('should call onRefresh when refresh button clicked', () => {
-      render(<GanttToolbar {...defaultProps} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} />);
       
       const refreshBtn = screen.getByText('Refresh');
       fireEvent.click(refreshBtn);
@@ -203,7 +209,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should show loading state', () => {
-      render(<GanttToolbar {...defaultProps} isLoading={true} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} isLoading={true} />);
       
       expect(screen.getByText('Loading...')).toBeInTheDocument();
     });
@@ -211,7 +217,7 @@ describe('GanttToolbar', () => {
 
   describe('Loading State', () => {
     it('should disable all buttons when loading', () => {
-      render(<GanttToolbar {...defaultProps} isLoading={true} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} isLoading={true} />);
       
       const buttons = screen.getAllByRole('button');
       buttons.forEach(button => {
@@ -220,7 +226,7 @@ describe('GanttToolbar', () => {
     });
 
     it('should enable buttons when not loading', () => {
-      render(<GanttToolbar {...defaultProps} isLoading={false} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} isLoading={false} />);
       
       const refreshBtn = screen.getByText('Refresh');
       expect(refreshBtn).not.toBeDisabled();
@@ -230,7 +236,7 @@ describe('GanttToolbar', () => {
   describe('Filter Combinations', () => {
     it('should handle multiple filter changes', () => {
       const onFiltersChange = vi.fn();
-      render(<GanttToolbar {...defaultProps} onFiltersChange={onFiltersChange} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} onFiltersChange={onFiltersChange} />);
       
       // Toggle off Feature
       fireEvent.click(screen.getByText('Feature'));
@@ -249,7 +255,7 @@ describe('GanttToolbar', () => {
         assignedTo: ['user-1']
       };
       
-      render(<GanttToolbar {...defaultProps} filters={customFilters} onFiltersChange={onFiltersChange} />);
+      renderWithTheme(<GanttToolbar {...defaultProps} filters={customFilters} onFiltersChange={onFiltersChange} />);
       
       fireEvent.click(screen.getByText('Bug'));
       

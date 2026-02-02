@@ -1,0 +1,175 @@
+.error-boundary-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  background: #faf9f8;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.error-boundary-content {
+  max-width: 600px;
+  text-align: center;
+  padding: 48px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.error-boundary-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.error-boundary-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #323130;
+  margin: 0 0 16px 0;
+}
+
+.error-boundary-message {
+  font-size: 16px;
+  color: #605e5c;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.error-boundary-details {
+  margin: 24px 0;
+  text-align: left;
+  background: #f3f2f1;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.error-boundary-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #323130;
+  user-select: none;
+}
+
+.error-boundary-stack {
+  margin-top: 16px;
+  padding: 12px;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: "Consolas", "Monaco", monospace;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.error-boundary-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.error-boundary-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.error-boundary-btn:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.error-boundary-btn-primary {
+  background: #0078d4;
+  color: white;
+}
+
+.error-boundary-btn-primary:hover {
+  background: #106ebe;
+}
+
+.error-boundary-btn-primary:active {
+  background: #005a9e;
+}
+
+.error-boundary-btn-secondary {
+  background: #f3f2f1;
+  color: #323130;
+}
+
+.error-boundary-btn-secondary:hover {
+  background: #e1dfdd;
+}
+
+.error-boundary-btn-secondary:active {
+  background: #c8c6c4;
+}
+
+.error-boundary-footer {
+  border-top: 1px solid #e1dfdd;
+  padding-top: 24px;
+}
+
+.error-boundary-link {
+  color: #0078d4;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.error-boundary-link:hover {
+  text-decoration: underline;
+}
+
+.error-boundary-link:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+/* Dark mode support */
+.dark-mode .error-boundary-container {
+  background: #1e1e1e;
+}
+
+.dark-mode .error-boundary-content {
+  background: #252525;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark-mode .error-boundary-title {
+  color: #f3f2f1;
+}
+
+.dark-mode .error-boundary-message {
+  color: #c8c6c4;
+}
+
+.dark-mode .error-boundary-details {
+  background: #323130;
+}
+
+.dark-mode .error-boundary-details summary {
+  color: #f3f2f1;
+}
+
+.dark-mode .error-boundary-btn-secondary {
+  background: #3b3a39;
+  color: #f3f2f1;
+}
+
+.dark-mode .error-boundary-btn-secondary:hover {
+  background: #484644;
+}
+
+.dark-mode .error-boundary-footer {
+  border-top-color: #3b3a39;
+}
