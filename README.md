@@ -2,9 +2,17 @@
 
 Visualize your work items in an interactive Gantt chart view. Plan, track, and manage your project timeline with ease.
 
-[![CI](https://github.com/your-org/ado-gantt/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/ado-gantt/actions/workflows/ci.yml)
-[![GitHub Release](https://img.shields.io/github/v/release/your-org/ado-gantt)](https://github.com/your-org/ado-gantt/releases)
+[![CI](https://github.com/MartinBspheroid/ado-gantt/actions/workflows/ci.yml/badge.svg)](https://github.com/MartinBspheroid/ado-gantt/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/MartinBspheroid/ado-gantt)](https://github.com/MartinBspheroid/ado-gantt/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+## Tech Stack
+
+- **React 18** - UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tooling
+- **wx-react-gantt** - Gantt chart component
+- **Azure DevOps Extension SDK** - Integration with Azure DevOps
 
 ## Features
 
@@ -28,50 +36,59 @@ Visualize your work items in an interactive Gantt chart view. Plan, track, and m
 
 #### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 18+ and npm (or Bun)
 - Azure DevOps organization for testing
+- Chrome with the localhost certificate accepted (for dev mode)
 
 #### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/ado-gantt.git
+git clone https://github.com/MartinBspheroid/ado-gantt.git
 cd ado-gantt
 
 # Install dependencies
 npm install
+# or with Bun
+bun install
 ```
 
 #### Development
 
+The extension uses Vite for fast builds and hot reloading.
+
 ```bash
-# Start development build with watch mode
-npm run watch
+# Build the extension with Vite
+npm run build:vite
+
+# Start the preview server (serves at https://localhost:3000)
+bunx vite preview --port 3000
 
 # Run linter
 npm run lint
-
-# Run tests
-npm test
-npm run test:watch        # Watch mode
-npm run test:coverage     # With coverage report
-
-# Run specific test suites
-npm run test:unit         # Unit tests only
-npm run test:components   # Component tests only
-npm run test:integration  # Integration tests only
 ```
+
+**First-time setup for local development:**
+
+1. Build the extension: `npm run build:vite`
+2. Start the preview server: `bunx vite preview --port 3000`
+3. Visit https://localhost:3000/dist/gantt.html in Chrome and accept the SSL certificate
+4. Install the dev extension in your Azure DevOps organization (see Publishing section)
+5. Navigate to Boards > Gantt in your Azure DevOps project
 
 #### Building
 
 ```bash
-# Build for production
+# Build with Vite (recommended)
+npm run build:vite
+
+# Build with webpack (legacy)
 npm run build
 
 # Create .vsix package
 npm run package
 
-# Create development package
+# Create development package (uses localhost:3000)
 npm run package:dev
 ```
 
@@ -174,116 +191,27 @@ Edit `vss-extension.json`:
 
 ## Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+We welcome contributions!
 
 ### Quick Start for Contributors
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/my-feature`
 3. Make your changes
-4. Run tests: `npm test`
+4. Build and test locally: `npm run build:vite && bunx vite preview --port 3000`
 5. Commit with conventional format: `feat(gantt): add new feature`
 6. Push and create a Pull Request
 
 ## Testing
 
-This project includes a comprehensive test suite using Vitest and React Testing Library.
-
-### Running Tests
-
-```bash
-# Run all tests once
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run tests with coverage report
-npm run test:coverage
-
-# Run specific test suites
-npm run test:unit          # Unit tests only
-npm run test:components    # Component tests only
-npm run test:integration   # Integration tests only
-npm run test:ui            # UI mode
-```
-
-### Test Structure
-
-```
-src/test/
-├── unit/                    # Unit tests for services and utilities
-│   ├── GanttDataService.test.ts
-│   ├── filtering.test.ts
-│   └── date-calculations.test.ts
-├── components/              # React component tests
-│   ├── GanttToolbar.test.tsx
-│   └── GanttChart.test.tsx
-├── integration/             # Integration and performance tests
-│   ├── data-flow.test.ts
-│   ├── performance.test.ts
-│   └── edge-cases.test.ts
-├── fixtures/                # Test data
-│   ├── realistic-workitems.json
-│   ├── empty-state.json
-│   ├── large-dataset.json
-│   └── edge-cases.json
-└── setup.ts                 # Test configuration
-```
-
-### Test Coverage
-
-The test suite aims for:
-- **>80% code coverage** across all modules
-- **100% coverage** for critical data transformation logic
-- **Performance benchmarks** for large datasets (500+ items)
+Testing infrastructure is planned for future development.
 
 ### Mock Services
 
-Test mocks are available in `src/services/__mocks__/`:
+Mock services are available in `src/services/__mocks__/` for development:
 
 - `MockWorkItemService.ts` - Simulates Azure DevOps API responses
-- `MockGanttDataService.ts` - Extends real service with test helpers
-
-Example usage:
-```typescript
-import { MockWorkItemService, MockScenarios } from './services/__mocks__';
-
-const service = new MockWorkItemService(MockScenarios.realistic());
-const workItems = await service.queryWorkItems();
-```
-
-### CI/CD Integration
-
-Tests are configured to run in CI environments with:
-- Automatic coverage reporting
-- Performance regression detection
-- JUnit XML output for test results
-
-### Writing Tests
-
-#### Unit Tests
-```typescript
-import { describe, it, expect } from 'vitest';
-
-describe('Feature', () => {
-  it('should do something', () => {
-    expect(true).toBe(true);
-  });
-});
-```
-
-#### Component Tests
-```typescript
-import { render, screen, fireEvent } from '@testing-library/react';
-
-describe('Component', () => {
-  it('renders correctly', () => {
-    render(<Component />);
-    expect(screen.getByText('Hello')).toBeInTheDocument();
-  });
-});
-```
+- `MockGanttDataService.ts` - Test helpers for Gantt data transformations
 
 ## Privacy & Security
 
@@ -296,7 +224,7 @@ This extension:
 ## Support
 
 For issues, feature requests, or contributions, please visit:
-[GitHub Issues](https://github.com/your-org/ado-gantt/issues)
+[GitHub Issues](https://github.com/MartinBspheroid/ado-gantt/issues)
 
 ## License
 
